@@ -34,6 +34,7 @@ const Petitions = () => {
     React.useEffect(() => {
         let filtered = petitions.filter((petition) => 
             petition.title.toLowerCase().includes(searchQuery.toLowerCase())
+            // TODO: Add filtering by description as well
         );
 
         if (selectedCategories.length > 0) {
