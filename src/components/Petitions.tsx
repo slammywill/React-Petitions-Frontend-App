@@ -2,18 +2,21 @@ import React from "react";
 import axios from "axios";
 import CSS from "csstype";
 import PetitionsObject from "./PetitionsObject";
-import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton} from "@mui/material";
+import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton, Pagination} from "@mui/material";
 import {Search} from "@mui/icons-material";
 
 const Petitions = () => {
     const [petitions, setPetitions] = React.useState<Array<Petition>>([])
     const [filteredPetitions, setFilteredPetitions] = React.useState<Array<Petition>>([])
+    const [paginatedPetitions, setPaginatedPetitions] = React.useState<Array<Petition>>([])
     const [errorFlag, setErrorFlag] = React.useState(false)
     const [errorMessage, setErrorMessage] = React.useState("")
     const [searchQuery, setSearchQuery] = React.useState("")
     const [selectedCategories, setSelectedCategories] = React.useState<Array<string>>([])
     const [maxSupportingCost, setMaxSupportingCost] = React.useState(Number("NaN"))
     const [sortType, setSortType] = React.useState("CREATED_ASC")
+    const [pageSize, setPageSize] = React.useState(10)
+    const [pageNumber, setPageNumber] = React.useState(1)
 
     const getPetitions = () => {
         axios.get("http://localhost:4941/api/v1/petitions", {
@@ -36,25 +39,33 @@ const Petitions = () => {
     }, [setPetitions, sortType])
 
     React.useEffect(() => {
+        // Search query
         let filtered = petitions.filter((petition) => 
             petition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             petition.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
+        // Categories
         if (selectedCategories.length > 0) {
             filtered = filtered.filter((petition) => 
                 selectedCategories.includes(petition.categoryId.toString())
             );
         }
+
+        // Max supporting cost
         if (!isNaN(Number(maxSupportingCost))) {
             filtered = filtered.filter((petition) =>
                 petition.supportingCost <= maxSupportingCost);
         }
 
         setFilteredPetitions(filtered);
-    }, [searchQuery, selectedCategories, maxSupportingCost, petitions]);
 
-    const petition_rows = () => filteredPetitions.map((petition: Petition) => 
+        // Page number and size
+        setPaginatedPetitions(filtered.slice(pageSize * (pageNumber - 1), pageSize * pageNumber));
+
+    }, [searchQuery, selectedCategories, maxSupportingCost, petitions, pageSize, pageNumber]);
+
+    const petition_rows = () => paginatedPetitions.map((petition: Petition) => 
         <PetitionsObject key={ petition.petitionId } petition={petition}/>)
 
     const card: CSS.Properties = {
@@ -89,22 +100,24 @@ const Petitions = () => {
                 <Input
                     id="search-bar"
                     placeholder="Search"
-                    onChange={(val) => setSearchQuery(val.target.value)}
+                    onChange={(event) => setSearchQuery(event.target.value)}
                     startAdornment={
                         <InputAdornment position="start">
                             <Search /> 
                         </InputAdornment>
                     }
                 />
-                <div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+                <div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
                     <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
                     <Input 
+                        size="small"
                         placeholder="Type a number..."
                         type="number"
                         onChange={handleMaxSupportingCostChange}
                     />
                     <p style={{marginLeft: "10px", marginRight: "10px"}}>Sort By: </p>
                     <Select 
+                        size="small"
                         value={sortType}
                         onChange={handleSortTypeChange}
                     >
@@ -142,6 +155,28 @@ const Petitions = () => {
                         { errorMessage }
                     </Alert>: ""}
                { petition_rows() }
+            </div>
+            <div>
+                <div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+                    <p style={{marginRight: "10px"}}>Petitions per page: </p>
+                    <Select 
+                        value={pageSize}
+                        onChange={(event) => setPageSize(event.target.value as number)}
+                        size="small"
+                    >
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={6}>6</MenuItem>
+                        <MenuItem value={7}>7</MenuItem>
+                        <MenuItem value={8}>8</MenuItem>
+                        <MenuItem value={9}>9</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                    </Select>
+                </div>
+                <Pagination 
+                    page={pageNumber}
+                    onChange={(event, value) => setPageNumber(value)}
+                    style={{display: "flex", justifyContent: "center", marginTop: "10px"}}
+                    count={Math.ceil(filteredPetitions.length / pageSize)} />
             </div>
         </Paper>
     )
