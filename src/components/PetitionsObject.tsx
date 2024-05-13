@@ -38,6 +38,17 @@ const PetitionsObject = (props: IPetitionProps) => {
             })
     }, [])
 
+    React.useEffect(() => {
+        axios.get("http://localhost:4941/api/v1/petitions/" + petition.petitionId)
+            .then(response => {
+                petition.description = response.data.description;
+            })
+            .catch(error => {
+                console.error(error.toString());
+                petition.description = "";
+            })
+        }, [])
+
     let categoryMap = new Map<number, string>([
         [1, "Wildlife"],
         [2, "Environmental Causes"],

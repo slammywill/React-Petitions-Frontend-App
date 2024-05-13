@@ -2,8 +2,7 @@ import React from "react";
 import axios from "axios";
 import CSS from "csstype";
 import PetitionsObject from "./PetitionsObject";
-import {Paper, AlertTitle, Alert, FormControl, InputAdornment, Input, ToggleButtonGroup, ToggleButton, InputLabel } from "@mui/material";
-import {Unstable_NumberInput as NumberInput} from "@mui/base";
+import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton} from "@mui/material";
 import {Search} from "@mui/icons-material";
 
 const Petitions = () => {
@@ -14,9 +13,14 @@ const Petitions = () => {
     const [searchQuery, setSearchQuery] = React.useState("")
     const [selectedCategories, setSelectedCategories] = React.useState<Array<string>>([])
     const [maxSupportingCost, setMaxSupportingCost] = React.useState(Number("NaN"))
+    const [sortType, setSortType] = React.useState("CREATED_ASC")
 
     const getPetitions = () => {
-        axios.get("http://localhost:4941/api/v1/petitions")
+        axios.get("http://localhost:4941/api/v1/petitions", {
+            params: {
+                sortBy: sortType
+            }
+        })
             .then((response) => {
                 setErrorFlag(false)
                 setErrorMessage("")
@@ -29,12 +33,12 @@ const Petitions = () => {
 
     React.useEffect(() => {
         getPetitions()
-    }, [setPetitions])
+    }, [setPetitions, sortType])
 
     React.useEffect(() => {
         let filtered = petitions.filter((petition) => 
-            petition.title.toLowerCase().includes(searchQuery.toLowerCase())
-            // TODO: Add filtering by description as well
+            petition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            petition.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
         if (selectedCategories.length > 0) {
@@ -74,6 +78,10 @@ const Petitions = () => {
         }
     };
 
+    const handleSortTypeChange = (event: SelectChangeEvent) => {
+        setSortType(event.target.value);
+    };
+
     return (
         <Paper elevation={3} style={card} >
             <h1>Petition List</h1>
@@ -88,13 +96,25 @@ const Petitions = () => {
                         </InputAdornment>
                     }
                 />
-                <div style={{display: "flex", justifyContent: "center"}}>
+                <div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
                     <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
                     <Input 
                         placeholder="Type a number..."
                         type="number"
                         onChange={handleMaxSupportingCostChange}
                     />
+                    <p style={{marginLeft: "10px", marginRight: "10px"}}>Sort By: </p>
+                    <Select 
+                        value={sortType}
+                        onChange={handleSortTypeChange}
+                    >
+                        <MenuItem value={"CREATED_ASC"}>Latest Date Created</MenuItem>
+                        <MenuItem value={"CREATED_DESC"}>Earliest Date Created</MenuItem>
+                        <MenuItem value={"ALPHABETICAL_ASC"}>Title A-Z</MenuItem>
+                        <MenuItem value={"ALPHABETICAL_DESC"}>Title Z-A</MenuItem>
+                        <MenuItem value={"COST_ASC"}>Lowest Cost</MenuItem>
+                        <MenuItem value={"COST_DESC"}>Highest Cost</MenuItem>
+                    </Select>
                 </div>
                 <ToggleButtonGroup size="small"
                     onChange={handleCategorySelection}

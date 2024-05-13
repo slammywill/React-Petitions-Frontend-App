@@ -7,5 +7,6 @@ type Petition = {
     ownerLastName: string,
     numberOfSupporters: number,
     creationDate: string,
-    supportingCost: number
+    supportingCost: number,
+    description: string
 }
