@@ -7,12 +7,12 @@ import { Card, Button, CardActions, CardContent, CardMedia, Dialog, Typography }
 
 interface IPetitionProps {
     petition: Petition
+    onOpenDeleteDialog: (p: Petition) => void
 }
 
 
 const PetitionsObject = (props: IPetitionProps) => {
-    const [petition] = React.useState<Petition>(props.petition)
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
+    const { petition, onOpenDeleteDialog } = props;
     const [petitionImageUrl, setPetitionImageUrl] = React.useState("");
     const [ownerImageUrl, setOwnerImageUrl] = React.useState("");
 
@@ -106,7 +106,10 @@ const PetitionsObject = (props: IPetitionProps) => {
                     <Button size="large" variant="contained" style={{width:"100%"}}>
                         View
                     </Button>
-                    <Button size="large" variant="contained" style={{width:"100%"}}>
+                    <Button size="large"
+                        variant="contained"
+                        style={{width:"100%"}}
+                        onClick={() => onOpenDeleteDialog(petition)}>
                         Delete
                     </Button>
                 </CardActions>
