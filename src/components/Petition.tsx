@@ -128,7 +128,7 @@ const Petition = () => {
                         <br />
                         <Typography variant="body1">{petition.description}</Typography>
                         <br />
-                        <Typography variant="body1" >This petition has {petition.numberOfSupporters} {petition.numberOfSupporters == 1 ? "supporter" : "supporters"}.</Typography>
+                        <Typography variant="body1" >This petition has {petition.numberOfSupporters} {petition.numberOfSupporters === 1 ? "supporter" : "supporters"}.</Typography>
                         <Typography variant="body1">This petition has raised ${petition.moneyRaised}.00.</Typography>
                     </div>
                 </div>
