@@ -6,8 +6,6 @@ import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdor
 import {Search} from "@mui/icons-material";
 import BASE_URL from '../config';
 import Navbar from './Navbar';
-import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
-
 
 const Petitions = () => {
     const [petitions, setPetitions] = React.useState<Array<Petition>>([])
