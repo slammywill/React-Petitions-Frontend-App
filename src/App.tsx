@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Petition from "./components/Petition";
 import NotFound from "./components/NotFound";
+import './globalStyles.css';
 
 function App() {
     return (

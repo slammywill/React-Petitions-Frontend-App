@@ -56,7 +56,7 @@ const PetitionsObject = (props: IPetitionProps) => {
         [4, "Health and Wellness"],
         [5, "Education"],
         [6, "Human Rights"],
-        [7, "Technoligy and Innovation"],
+        [7, "Technology and Innovation"],
         [8, "Arts and Culture"],
         [9, "Community Development"],
         [10, "Economic Empowerment"],
@@ -67,7 +67,7 @@ const PetitionsObject = (props: IPetitionProps) => {
     const petitionCardStyles: CSS.Properties = {
         display: "inline-grid",
         position:"relative",
-        height: "600px",
+        height: "650px",
         width: "300px",
         margin: "10px",
         padding: "0px",

@@ -44,7 +44,7 @@ const Petitions = () => {
         // Search query
         let filtered = petitions.filter((petition) => 
             petition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            petition.description.toLowerCase().includes(searchQuery.toLowerCase())
+            (petition.description && petition.description.toLowerCase().includes(searchQuery.toLowerCase()))
         );
 
         // Categories
@@ -104,6 +104,9 @@ const Petitions = () => {
     const handleDeleteDialogClose = () => {
         setDialogPetition(null);
         setOpenDeleteDialog(false);
+    }
+
+    const handlePageSizeChange = () => {
     }
 
     return (
