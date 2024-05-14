@@ -156,6 +156,9 @@ const Petitions = () => {
                     </Alert>: ""}
                { petition_rows() }
             </div>
+            {pageNumber === Math.ceil(filteredPetitions.length / pageSize) && (
+                <p style={{color:"grey"}}>There are no more petitions</p>
+            )}
             <div>
                 <div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
                     <p style={{marginRight: "10px"}}>Petitions per page: </p>
@@ -174,6 +177,8 @@ const Petitions = () => {
                 </div>
                 <Pagination 
                     page={pageNumber}
+                    showFirstButton
+                    showLastButton
                     onChange={(event, value) => setPageNumber(value)}
                     style={{display: "flex", justifyContent: "center", marginTop: "10px"}}
                     count={Math.ceil(filteredPetitions.length / pageSize)} />

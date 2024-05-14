@@ -65,8 +65,9 @@ const PetitionsObject = (props: IPetitionProps) => {
     ]);
 
     const petitionCardStyles: CSS.Properties = {
-        display: "inline-block",
-        height: "520px",
+        display: "inline-grid",
+        position:"relative",
+        height: "600px",
         width: "300px",
         margin: "10px",
         padding: "0px",
@@ -83,22 +84,32 @@ const PetitionsObject = (props: IPetitionProps) => {
                 src={petitionImageUrl}
                 alt="Petition Image"
             />
-            <CardContent>
-                <Typography variant="h6">
-                    {petition.title}
-                </Typography>
-                <div style={{display: "block"}}>
-                    <p>{petition.ownerFirstName} {petition.ownerLastName}</p>
-                    <img
-                        src={ownerImageUrl}
-                        alt=""
-                        id="profile-image"
-                        onError={(e) => {(e.target as HTMLImageElement).src = defaultImage}}
-                    />
-                    <p>Created: {petition.creationDate}</p>
-                    <p>Category: {categoryMap.get(petition.categoryId)}</p>
-                    <p>Minimum tier supporting cost: ${petition.supportingCost}.00</p>
+            <CardContent style={{ display: "flex", flexDirection: "column", height: "90%" }}>
+                <div style={{ flexGrow: 1 }}>
+                    <Typography variant="h6">
+                        {petition.title}
+                    </Typography>
+                    <div style={{ display: "block" }}>
+                        <p>{petition.ownerFirstName} {petition.ownerLastName}</p>
+                        <img
+                            src={ownerImageUrl}
+                            alt=""
+                            id="profile-image"
+                            onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
+                        />
+                        <p>Created: {petition.creationDate}</p>
+                        <p>Category: {categoryMap.get(petition.categoryId)}</p>
+                        <p>Minimum tier supporting cost: ${petition.supportingCost}.00</p>
+                    </div>
                 </div>
+                <CardActions style={{ display: "flex", justifyContent: "space-between"}}>
+                    <Button size="large" variant="contained" style={{width:"100%"}}>
+                        View
+                    </Button>
+                    <Button size="large" variant="contained" style={{width:"100%"}}>
+                        Delete
+                    </Button>
+                </CardActions>
             </CardContent>
         </Card>
     )
