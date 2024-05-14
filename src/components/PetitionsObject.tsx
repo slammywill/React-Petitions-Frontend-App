@@ -3,7 +3,9 @@ import "../App.css";
 import defaultImage from "../resources/default_profile_image.png";
 import axios from "axios";
 import CSS from 'csstype';
-import { Card, Button, CardActions, CardContent, CardMedia, Dialog, Typography } from "@mui/material";
+import { Card, Button, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import BASE_URL from '../config';
+import { useNavigate } from 'react-router-dom';
 
 interface IPetitionProps {
     petition: Petition
@@ -15,9 +17,10 @@ const PetitionsObject = (props: IPetitionProps) => {
     const { petition, onOpenDeleteDialog } = props;
     const [petitionImageUrl, setPetitionImageUrl] = React.useState("");
     const [ownerImageUrl, setOwnerImageUrl] = React.useState("");
+    const navigate = useNavigate();
 
     React.useEffect(() => {
-        axios.get("http://localhost:4941/api/v1/petitions/" + petition.petitionId + "/image", {responseType: 'blob' })
+        axios.get(BASE_URL + "/petitions/" + petition.petitionId + "/image", {responseType: 'blob' })
             .then( response =>  {
                 const url = URL.createObjectURL(response.data);
                 setPetitionImageUrl(url);
@@ -28,7 +31,7 @@ const PetitionsObject = (props: IPetitionProps) => {
     }, [])
 
     React.useEffect(() => {
-        axios.get("http://localhost:4941/api/v1/users/" + petition.ownerId + "/image", {responseType: 'blob' })
+        axios.get(BASE_URL + "/users/" + petition.ownerId + "/image", {responseType: 'blob' })
             .then( response =>  {
                 const url = URL.createObjectURL(response.data);
                 setOwnerImageUrl(url);
@@ -39,7 +42,7 @@ const PetitionsObject = (props: IPetitionProps) => {
     }, [])
 
     React.useEffect(() => {
-        axios.get("http://localhost:4941/api/v1/petitions/" + petition.petitionId)
+        axios.get(BASE_URL + "/petitions/" + petition.petitionId)
             .then(response => {
                 petition.description = response.data.description;
             })
@@ -74,6 +77,28 @@ const PetitionsObject = (props: IPetitionProps) => {
         alignItems: "start",
     }
 
+    const handleViewButtonClick = () => {
+        navigate("/petitions/" + petition.petitionId);
+    }
+
+    function formatDate(date: Date): string {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+        return `${day} ${month}, ${year} at ${formattedHours}:${formattedMinutes}${ampm}`;
+    }
+
     return (
         <Card sx={petitionCardStyles}>
             <CardMedia
@@ -97,17 +122,23 @@ const PetitionsObject = (props: IPetitionProps) => {
                             id="profile-image"
                             onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
                         />
-                        <p>Created: {petition.creationDate}</p>
+                        <p>Created: {formatDate(new Date(petition.creationDate))}</p>
                         <p>Category: {categoryMap.get(petition.categoryId)}</p>
                         <p>Minimum tier supporting cost: ${petition.supportingCost}.00</p>
                     </div>
                 </div>
                 <CardActions style={{ display: "flex", justifyContent: "space-between"}}>
-                    <Button size="large" variant="contained" style={{width:"100%"}}>
+                    <Button
+                        size="large"
+                        variant="outlined"
+                        style={{width: "100%"}}
+                        onClick={handleViewButtonClick}
+                    >
                         View
                     </Button>
-                    <Button size="large"
-                        variant="contained"
+                    <Button
+                        size="large"
+                        variant="outlined"
                         style={{width:"100%"}}
                         onClick={() => onOpenDeleteDialog(petition)}>
                         Delete

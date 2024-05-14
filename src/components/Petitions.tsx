@@ -2,8 +2,12 @@ import React from "react";
 import axios from "axios";
 import CSS from "csstype";
 import PetitionsObject from "./PetitionsObject";
-import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent} from "@mui/material";
+import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button} from "@mui/material";
 import {Search} from "@mui/icons-material";
+import BASE_URL from '../config';
+import Navbar from './Navbar';
+import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
+
 
 const Petitions = () => {
     const [petitions, setPetitions] = React.useState<Array<Petition>>([])
@@ -21,7 +25,7 @@ const Petitions = () => {
     const [dialogPetition, setDialogPetition] = React.useState<Petition | null>(null)
 
     const getPetitions = () => {
-        axios.get("http://localhost:4941/api/v1/petitions", {
+        axios.get(BASE_URL + "/petitions", {
             params: {
                 sortBy: sortType
             }
@@ -56,6 +60,7 @@ const Petitions = () => {
 
         // Max supporting cost
         if (!isNaN(Number(maxSupportingCost))) {
+            console.log(maxSupportingCost)
             filtered = filtered.filter((petition) =>
                 petition.supportingCost <= maxSupportingCost);
         }
@@ -71,7 +76,7 @@ const Petitions = () => {
         <PetitionsObject key={petition.petitionId} petition={petition} onOpenDeleteDialog={(p) => handleDeleteDialogOpen(p)} />
     )
 
-    const card: CSS.Properties = {
+    const paperStyle: CSS.Properties = {
         padding: "10px",
         margin: "20px",
         display: "grid",
@@ -87,6 +92,10 @@ const Petitions = () => {
 
     const handleMaxSupportingCostChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value = event.target.value;
+        console.log(value);
+        if (value === "") {
+            setMaxSupportingCost(Number("NaN"));
+        }
         if (!isNaN(Number(value))) {
             setMaxSupportingCost(Number(value));
         }
@@ -106,12 +115,22 @@ const Petitions = () => {
         setOpenDeleteDialog(false);
     }
 
-    const handlePageSizeChange = () => {
+    const deletePetition = (petition: Petition) => {
+        // Check that the petition does not have any supporters
+
+    }
+
+    const handlePageSizeChange = (event: any) => {
+        setPageSize(event.target.value as number);
+        setPageNumber(1);
     }
 
     return (
         <div>
-            <Paper elevation={3} style={card} >
+            <div>
+                <Navbar />
+            </div>
+            <Paper elevation={3} style={paperStyle} >
                 <h1>Petition List</h1>
                 <div id="search-items" >
                     <Input
@@ -126,7 +145,7 @@ const Petitions = () => {
                     />
                     <div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
                         <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
-                        <Input 
+                        <Input
                             size="small"
                             placeholder="Type a number..."
                             type="number"
@@ -181,7 +200,7 @@ const Petitions = () => {
                         <p style={{marginRight: "10px"}}>Petitions per page: </p>
                         <Select 
                             value={pageSize}
-                            onChange={(event) => setPageSize(event.target.value as number)}
+                            onChange={handlePageSizeChange}
                             size="small"
                         >
                             <MenuItem value={5}>5</MenuItem>
@@ -204,12 +223,47 @@ const Petitions = () => {
             <Dialog
                 open={openDeleteDialog}
                 onClose={handleDeleteDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{textAlign:"center"}}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {dialogPetition && (
-                        <p>{dialogPetition.description}</p>
-                    )}
+                    {"Delete Petition"}
                 </DialogTitle>
+                    {dialogPetition && (
+                        <DialogContent
+                            style={{ display: "flex",
+                                flexDirection: "column",
+                                height: "100%",
+                                paddingBottom:"0"}}
+                        >
+                            <DialogContentText
+                                id="alert-dialog-description"
+                                style={{paddingTop:"10px"}}>
+                                Are you sure you want to delete this petition?
+                            </DialogContentText>
+                            <DialogActions style={{
+                                justifyContent:"center",
+                                height:"100%",
+                                paddingTop:"40px"
+                            }}>
+                                <Button
+                                    style={{width:"100%", height:"50px"}}
+                                    variant="outlined"
+                                    onClick={handleDeleteDialogClose}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    style={{ width:"100%", height:"50px"}}
+                                    variant="contained"
+                                    color="error"
+                                    disableElevation
+                                    onClick={() => deletePetition(dialogPetition)}>
+                                    Delete
+                                </Button>
+                            </DialogActions>
+                        </DialogContent>
+                    )}
                 <DialogContent>
                 </DialogContent>
             </Dialog>

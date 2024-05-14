@@ -15,11 +15,11 @@ function App() {
             <Router>
                 <div>
                     <Routes>
-                        <Route path="/petitions"  element={<Petitions/>}/>
+                        <Route path="/"           element={<Petitions/>}/>
                         <Route path="/register"   element={<Register/>}/>
                         <Route path="/login"      element={<Login/>}/>
-                        <Route path="/profile:id" element={<Profile/>}/>
-                        <Route path="/petition"   element={<Petition/>}/>
+                        <Route path="/profile" element={<Profile/>}/>
+                        <Route path="/petitions/:id"   element={<Petition/>}/>
                         <Route path="*"           element={<NotFound/>}/>
                     </Routes>
                 </div>
