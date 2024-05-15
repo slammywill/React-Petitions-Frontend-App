@@ -15,12 +15,13 @@ const Petitions = () => {
     const [errorMessage, setErrorMessage] = React.useState("")
     const [searchQuery, setSearchQuery] = React.useState("")
     const [selectedCategories, setSelectedCategories] = React.useState<Array<string>>([])
-    const [maxSupportingCost, setMaxSupportingCost] = React.useState(Number("NaN"))
+    const [maxSupportingCost, setMaxSupportingCost] = React.useState(NaN)
     const [sortType, setSortType] = React.useState("CREATED_ASC")
     const [pageSize, setPageSize] = React.useState(10)
     const [pageNumber, setPageNumber] = React.useState(1)
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false) 
     const [dialogPetition, setDialogPetition] = React.useState<Petition | null>(null)
+    const [numberInputValue, setNumberInputValue] = React.useState("")
 
     const getPetitions = () => {
         axios.get(BASE_URL + "/petitions", {
@@ -58,7 +59,6 @@ const Petitions = () => {
 
         // Max supporting cost
         if (!isNaN(Number(maxSupportingCost))) {
-            console.log(maxSupportingCost)
             filtered = filtered.filter((petition) =>
                 petition.supportingCost <= maxSupportingCost);
         }
@@ -71,7 +71,7 @@ const Petitions = () => {
     }, [searchQuery, selectedCategories, maxSupportingCost, petitions, pageSize, pageNumber]);
 
     const petition_rows = () => paginatedPetitions.map((petition: Petition) =>
-        <PetitionsObject key={petition.petitionId} petition={petition} onOpenDeleteDialog={(p) => handleDeleteDialogOpen(p)} />
+        <PetitionsObject key={petition.petitionId} petition={petition} />
     )
 
     const paperStyle: CSS.Properties = {
@@ -90,12 +90,12 @@ const Petitions = () => {
 
     const handleMaxSupportingCostChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value = event.target.value;
-        console.log(value);
-        if (value === "") {
-            setMaxSupportingCost(Number("NaN"));
-        }
-        if (!isNaN(Number(value))) {
+        if (value === '' || /^[0-9]+$/.test(value)) {
+            setNumberInputValue(value);
             setMaxSupportingCost(Number(value));
+        }
+        if (value === "") {
+            setMaxSupportingCost(NaN);
         }
     };
 
@@ -145,8 +145,8 @@ const Petitions = () => {
                         <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
                         <Input
                             size="small"
+                            value={numberInputValue}
                             placeholder="Type a number..."
-                            type="number"
                             onChange={handleMaxSupportingCostChange}
                         />
                         <p style={{marginLeft: "10px", marginRight: "10px"}}>Sort By: </p>

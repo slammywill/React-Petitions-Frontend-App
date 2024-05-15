@@ -1,3 +1,4 @@
+
 type Petition = {
     petitionId: number,
     title: string,
@@ -11,6 +12,13 @@ type Petition = {
     description: string
 }
 
+type SupportTier = {
+    title: string,
+    description: string,
+    cost: number,
+    supportTierId: number
+}
+
 type SinglePetition = {
     petitionId: number,
     title: string,
@@ -22,5 +30,15 @@ type SinglePetition = {
     creationDate: string,
     description: string,
     moneyRaised: number,
-    supportTiers: SupportTiers[]
+    supportTiers: SupportTier[]
+}
+
+type Supporter = {
+    supportId: number,
+    supportTierId: number,
+    message: string,
+    supporterId: number,
+    supporterFirstName: string,
+    supporterLastName: string,
+    timestamp: string
 }

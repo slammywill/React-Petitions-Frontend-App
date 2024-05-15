@@ -1,11 +1,14 @@
 import Navbar from "./Navbar";
+import PetitionsObject from "./PetitionsObject";
 import CSS from "csstype";
-import {Alert, AlertTitle, Paper, Typography} from "@mui/material";
+import {Alert, AlertTitle, Paper, TableContainer, TableHead, Typography, TableCell, TableRow, Table, TableBody} from "@mui/material";
 import React from "react";
 import axios from "axios";
 import BASE_URL from "../config";
 import {useNavigate, useParams} from "react-router-dom";
 import defaultImage from "../resources/default_profile_image.png";
+import SupportTierObject from "./SupportTierObject";
+import SupporterObject from "./SupporterObject";
 
 const Petition = () => {
     const [petition, setPetition] = React.useState<SinglePetition>({} as SinglePetition);
@@ -14,11 +17,15 @@ const Petition = () => {
     const { id } = useParams();
     const [petitionImageUrl, setPetitionImageUrl] = React.useState("");
     const [ownerImageUrl, setOwnerImageUrl] = React.useState("");
+    const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
+    const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
+    const [petitions, setPetitions] = React.useState<Array<Petition>>([]);
 
     React.useEffect(() => {
         axios.get(BASE_URL + "/petitions/" + id)
             .then(response => {
                 setPetition(response.data);
+                setSupportTiers(response.data.supportTiers);
                 setErrorFlag(false);
                 setErrorMessage("");
             })
@@ -55,6 +62,30 @@ const Petition = () => {
         }
     }, [petition])
 
+    React.useEffect(() => {
+        if (petition) {
+            axios.get(BASE_URL + "/petitions/" + id + "/supporters")
+                .then(response => {
+                    setSupporters(response.data);
+                })
+                .catch(error => {
+                    console.log("GET Petition supporters:", error.toString());
+                })
+        }
+    }, [petition])
+
+    React.useEffect(() => {
+        axios.get(BASE_URL + "/petitions")
+            .then((response) => {
+                let validPetitions = response.data.petitions;
+                setPetitions(validPetitions.filter((new_petition: Petition) =>
+                    (new_petition.ownerId === petition.ownerId || new_petition.categoryId === petition.categoryId) &&
+                        new_petition.petitionId !== petition.petitionId));
+            }, (error) => {
+                setErrorMessage(error.toString())
+            })
+    }, [petition])
+
     function formatDate(date: Date): string {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June',
@@ -81,6 +112,19 @@ const Petition = () => {
         width: "fill"
     }
 
+    const support_tiers = () => supportTiers.map((supportTier: SupportTier) =>
+        <SupportTierObject key={supportTier.supportTierId} supportTier={supportTier} />
+    )
+
+    const supporter_rows = () => supporters.map((supporter: Supporter) =>
+        <SupporterObject key={supporter.supporterId} supporter={supporter} supportTiers={supportTiers}/>
+    )
+
+    const petition_rows = () => petitions.map((petition: Petition) =>
+        <PetitionsObject key={petition.petitionId} petition={petition} />
+    )
+
+
     return (
         <div>
             <div>
@@ -92,7 +136,7 @@ const Petition = () => {
                     {errorMessage}
                 </Alert>}
             <Paper style={paperStyle} elevation={3}>
-                <div style={{display:"flex", padding:"50px"}}>
+                <div style={{display:"flex", padding:"50px 50px 0 50px"}}>
                     {petitionImageUrl &&
                         <div>
                             <img
@@ -103,33 +147,68 @@ const Petition = () => {
                                     width: "400px",
                                     height: "400px",
                                     borderRadius: "20px",
+                                    marginBottom: "20px"
                                 }}
                             />
+                            <Typography variant="body1">Owner</Typography>
+                                <Typography variant="h5">
+                                    {petition.ownerFirstName} {petition.ownerLastName}
+                                </Typography>
+                            <div style={{display: "flex", justifyContent:"center", alignItems:"center", paddingTop:"10px"}}>
+                                <img
+                                    src={ownerImageUrl}
+                                    alt="Owner"
+                                    style={{
+                                        objectFit: "cover",
+                                        width: "150px",
+                                        height: "150px",
+                                        borderRadius: "50%",
+                                    }}
+                                />
+                            </div>
                         </div>
                     }
-                    <div style={{width:"fill", height:"100%", marginLeft:"50px", textAlign:"left"}}>
+                    <div style={{width:"100%", height:"100%", marginLeft:"50px", textAlign:"left"}}>
                         <Typography variant="h2">{petition.title}</Typography>
-                        <div style={{display: "flex", alignItems:"center"}}>
-                            <img
-                                src={ownerImageUrl}
-                                alt="Owner"
-                                style={{
-                                    objectFit: "cover",
-                                    width: "65px",
-                                    height: "65px",
-                                    borderRadius: "50%",
-                                    marginRight: "20px"
-                                }}
-                            />
-                            <Typography variant="h5">
-                                {petition.ownerFirstName} {petition.ownerLastName}
-                            </Typography>
-                        </div>
                         <br />
-                        <Typography variant="body1">{petition.description}</Typography>
+                        <Typography variant="h6">{petition.description}</Typography>
                         <br />
+                        <Typography variant="body1">Creation date: {formatDate(new Date(petition.creationDate))}</Typography>
                         <Typography variant="body1" >This petition has {petition.numberOfSupporters} {petition.numberOfSupporters === 1 ? "supporter" : "supporters"}.</Typography>
                         <Typography variant="body1">This petition has raised ${petition.moneyRaised}.00.</Typography>
+                        <div style={{width:"100%", textAlign:"center", margin:"30px 0 10px 0"}}>
+                            <Typography variant="h4">Support Tiers</Typography>
+                        </div>
+                        <div >
+                            { support_tiers() }
+                        </div>
+                        <div style={{width:"100%", textAlign:"center", margin:"30px 0 10px 0"}}>
+                            <Typography variant="h4">Supporters</Typography>
+                        </div>
+                        <div>
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell><b>Name</b></TableCell>
+                                            <TableCell><b>Support Tier</b></TableCell>
+                                            <TableCell><b>Date</b></TableCell>
+                                            <TableCell><b>Message</b></TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        { supporter_rows() }
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    </div>
+                </div>
+                <Typography variant="h4" style={{marginTop:"30px"}}>Similar Petitions</Typography>
+                <div style={{display:"flex", margin:"0 50px 50px 50px", justifyContent:"center"}}>
+                    <div style={{ display: "inline-block",  minWidth: "320px" }}>
+                        { petitions.length !== 0 && petition_rows() }
+                        { petitions.length === 0 && <Typography variant="subtitle1" style={{color:"grey", marginTop:"20px"}}>There are no similar petitions.</Typography>}
                     </div>
                 </div>
             </Paper>

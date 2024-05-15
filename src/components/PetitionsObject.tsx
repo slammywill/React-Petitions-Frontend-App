@@ -3,21 +3,19 @@ import "../App.css";
 import defaultImage from "../resources/default_profile_image.png";
 import axios from "axios";
 import CSS from 'csstype';
-import { Card, Button, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import {Link, Card, Button, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
 
 interface IPetitionProps {
     petition: Petition
-    onOpenDeleteDialog: (p: Petition) => void
 }
 
 
 const PetitionsObject = (props: IPetitionProps) => {
-    const { petition, onOpenDeleteDialog } = props;
+    const { petition } = props;
     const [petitionImageUrl, setPetitionImageUrl] = React.useState("");
     const [ownerImageUrl, setOwnerImageUrl] = React.useState("");
-    const navigate = useNavigate();
 
     React.useEffect(() => {
         axios.get(BASE_URL + "/petitions/" + petition.petitionId + "/image", {responseType: 'blob' })
@@ -70,15 +68,11 @@ const PetitionsObject = (props: IPetitionProps) => {
     const petitionCardStyles: CSS.Properties = {
         display: "inline-grid",
         position:"relative",
-        height: "650px",
+        height: "600px",
         width: "300px",
         margin: "10px",
         padding: "0px",
         alignItems: "start",
-    }
-
-    const handleViewButtonClick = () => {
-        navigate("/petitions/" + petition.petitionId);
     }
 
     function formatDate(date: Date): string {
@@ -100,52 +94,37 @@ const PetitionsObject = (props: IPetitionProps) => {
     }
 
     return (
-        <Card sx={petitionCardStyles}>
-            <CardMedia
-                component="img"
-                height="200px"
-                width="300px"
-                sx={{objectFit:"cover"}}
-                src={petitionImageUrl}
-                alt="Petition Image"
-            />
-            <CardContent style={{ display: "flex", flexDirection: "column", height: "90%" }}>
-                <div style={{ flexGrow: 1 }}>
-                    <Typography variant="h6">
-                        {petition.title}
-                    </Typography>
-                    <div style={{ display: "block" }}>
-                        <p>{petition.ownerFirstName} {petition.ownerLastName}</p>
-                        <img
-                            src={ownerImageUrl}
-                            alt=""
-                            id="profile-image"
-                            onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
-                        />
-                        <p>Created: {formatDate(new Date(petition.creationDate))}</p>
-                        <p>Category: {categoryMap.get(petition.categoryId)}</p>
-                        <p>Minimum tier supporting cost: ${petition.supportingCost}.00</p>
+        <Link href={"/petitions/" + petition.petitionId}>
+            <Card sx={petitionCardStyles}>
+                <CardMedia
+                    component="img"
+                    height="200px"
+                    width="300px"
+                    sx={{objectFit:"cover"}}
+                    src={petitionImageUrl}
+                    alt="Petition Image"
+                />
+                <CardContent style={{ display: "flex", flexDirection: "column", height: "90%" }}>
+                    <div style={{ flexGrow: 1 }}>
+                        <Typography variant="h6">
+                            {petition.title}
+                        </Typography>
+                        <div style={{ display: "block" }}>
+                            <p>{petition.ownerFirstName} {petition.ownerLastName}</p>
+                            <img
+                                src={ownerImageUrl}
+                                alt=""
+                                id="profile-image"
+                                onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
+                            />
+                            <p>Created: {formatDate(new Date(petition.creationDate))}</p>
+                            <p>Category: {categoryMap.get(petition.categoryId)}</p>
+                            <p>Minimum tier supporting cost: ${petition.supportingCost}.00</p>
+                        </div>
                     </div>
-                </div>
-                <CardActions style={{ display: "flex", justifyContent: "space-between"}}>
-                    <Button
-                        size="large"
-                        variant="outlined"
-                        style={{width: "100%"}}
-                        onClick={handleViewButtonClick}
-                    >
-                        View
-                    </Button>
-                    <Button
-                        size="large"
-                        variant="outlined"
-                        style={{width:"100%"}}
-                        onClick={() => onOpenDeleteDialog(petition)}>
-                        Delete
-                    </Button>
-                </CardActions>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </Link>
     )
 }
 
