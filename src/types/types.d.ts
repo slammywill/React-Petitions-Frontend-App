@@ -42,3 +42,8 @@ type Supporter = {
     supporterLastName: string,
     timestamp: string
 }
+
+type AuthUser = {
+    userId: number,
+    token: string
+}

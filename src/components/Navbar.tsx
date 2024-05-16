@@ -1,8 +1,17 @@
 import {AppBar, Toolbar, Typography, Button, ButtonGroup} from "@mui/material";
-import BASE_URL from "../config";
 import '../index.css';
+import { useAuthUserStore } from "../store";
+import { useNavigate } from "react-router-dom";
+import React from "react";
 
 const Navbar = () => {
+    const authUser = useAuthUserStore(state => state.authUser);
+    const navigate = useNavigate();
+
+    const handleLogoutClick = () => {
+        // Logout
+    }
+
     return (
         <AppBar position="static">
             <Toolbar>
@@ -11,21 +20,13 @@ const Navbar = () => {
                     </a>
                 <Typography variant="h5" sx={{ flexGrow: 1, textAlign: "center" }}>
                     <ButtonGroup color="inherit" variant="text" size="large">
-                        <a href="/Profile" style={{textDecoration:"none", color:"white"}}>
-                            <Button>Profile</Button>
-                        </a>
-                        <a href="/" style={{textDecoration: "none", color: "white"}}>
-                            <Button>Petitions</Button>
-                        </a>
+                            <Button id="profileButton" disabled={!authUser} onClick={() => navigate("/Profile")}>Profile</Button>
+                            <Button id="petitionsButton" onClick={() => navigate("/")}>Petitions</Button>
                     </ButtonGroup>
                 </Typography>
                 <ButtonGroup color="inherit" variant="text" size="large">
-                    <a href="/Login" style={{textDecoration: "none", color: "white"}}>
-                        <Button>Login</Button>
-                    </a>
-                    <a href="/Logout" style={{textDecoration: "none", color: "white"}}>
-                        <Button>Logout</Button>
-                    </a>
+                        <Button id="loginButton" disabled={!!authUser} onClick={() => navigate("/Login")}>Login</Button>
+                        <Button id="logoutButton" disabled={!authUser} onClick={handleLogoutClick}>Logout</Button>
                 </ButtonGroup>
             </Toolbar>
         </AppBar>
