@@ -5,6 +5,7 @@ import React from "react"
 import BASE_URL from "../config";
 import axios from "axios";
 import { useAuthUserStore } from "../store";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [emailError, setEmailError] = React.useState("");
@@ -15,6 +16,7 @@ const Login = () => {
     const [loginErrorFlag, setLoginErrorFlag] = React.useState(false);
     const authUser = useAuthUserStore(state => state.authUser);
     const setAuthUser = useAuthUserStore(state => state.setAuthUser);
+    const navigate = useNavigate();
 
 
     const paperStyle: CSS.Properties = {
@@ -35,6 +37,8 @@ const Login = () => {
                     setAuthUser(response.data);
                     setLoginError("");
                     setLoginErrorFlag(false);
+                    navigate("/");
+
                 } else {
                     setLoginError("User already logged in. Log out first to log into another account");
                     setLoginErrorFlag(true);

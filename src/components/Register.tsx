@@ -6,6 +6,7 @@ import * as EmailValidator from "email-validator";
 import BASE_URL from "../config";
 import axios from "axios";
 import { useAuthUserStore } from "../store";
+import { warn } from "console";
 
 const Register = () => {
     const authUser = useAuthUserStore(state => state.authUser);
@@ -21,6 +22,7 @@ const Register = () => {
     const [passwordError, setPasswordError] = React.useState("");
     const [passwordErrorFlag, setPasswordErrorFlag] = React.useState(false);
     const [registerError, setRegisterError] = React.useState("");
+    const [registerErrorFlag, setRegisterErrorFlag] = React.useState(false);
 
     const paperStyle: CSS.Properties = {
         padding: "50px",
@@ -30,18 +32,34 @@ const Register = () => {
         minWidth:"400px"
     }
 
+    React.useEffect(() => {
+        if (authUser) {
+            setRegisterError("You cannot register if you are already logged in. Please log out to register a new account");
+            setRegisterErrorFlag(true);
+        } else {
+            setRegisterError("");
+            setRegisterErrorFlag(false);
+        }
+    }, [])
+
     const handleCreateAccount = () => {
-        axios.post(BASE_URL + "/users/login", {
+        axios.post(BASE_URL + "/users/register", {
             email: email,
+            firstName: firstName,
+            lastName: lastName,
             password: password
         })
             .then((response) => {
-            })
+                setAuthUser(response.data);
+                console.log(authUser?.userId);
+            }
+            )
             .catch(error => {
             })
     }
 
     const validateEmail = (value: string) => {
+        setEmail(value);
         if (EmailValidator.validate(email)) {
             setEmailErrorFlag(false);
             setEmailError("");
@@ -101,6 +119,7 @@ const Register = () => {
                             style={{width:"100%"}}
                             aria-describedby="email-error-text"
                             onChange={(event) => validateEmail(event.target.value)}
+                            onBlur={(event) => validateEmail(event.target.value)}
                         />
                         <FormHelperText id="email-error-text" style={{color:"#e15141"}}>{email !== "" && emailError}</FormHelperText>
                     </FormControl>
@@ -114,10 +133,11 @@ const Register = () => {
                             style={{width:"100%"}}
                             aria-describedby="password-error-text"
                             onChange={(event) => validatePassword(event.target.value)}
+                            onBlur={(event) => validatePassword(event.target.value)}
                         />
                     </FormControl>
                         <FormHelperText id="password-error-text" style={{color:"#e15141"}}>{password !== "" && passwordError}</FormHelperText>
-                        <Typography variant="body1">{registerError}</Typography>
+                        <Typography variant="body1" style={{color:"#e15141"}}>{registerError}</Typography>
                     <div>
                         <Button
                             disabled={!!emailErrorFlag || lastName === "" || firstName === "" || !!passwordErrorFlag}
