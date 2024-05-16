@@ -18,6 +18,8 @@ const Navbar = () => {
         setOpenLogoutDialog(false);
     }
 
+    // Go back to last page on modal buttons
+
     return (
         <div>
             <AppBar position="static">

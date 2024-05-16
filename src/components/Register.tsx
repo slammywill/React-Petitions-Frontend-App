@@ -7,10 +7,12 @@ import BASE_URL from "../config";
 import axios from "axios";
 import { useAuthUserStore } from "../store";
 import { warn } from "console";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const authUser = useAuthUserStore(state => state.authUser);
     const setAuthUser = useAuthUserStore(state => state.setAuthUser);
+    const navigate = useNavigate();
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -51,7 +53,7 @@ const Register = () => {
         })
             .then((response) => {
                 setAuthUser(response.data);
-                console.log(authUser?.userId);
+                navigate("/");
             }
             )
             .catch(error => {
