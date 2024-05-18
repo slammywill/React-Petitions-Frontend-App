@@ -1,16 +1,19 @@
 import Navbar from "./Navbar";
 import PetitionsObject from "./PetitionsObject";
 import CSS from "csstype";
-import {Alert, AlertTitle, Paper, TableContainer, TableHead, Typography, TableCell, TableRow, Table, TableBody} from "@mui/material";
+import {Alert, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, AlertTitle, Paper, Button, TableContainer, TableHead, Typography, TableCell, TableRow, Table, TableBody} from "@mui/material";
 import React from "react";
 import axios from "axios";
 import BASE_URL from "../config";
 import {useNavigate, useParams} from "react-router-dom";
 import defaultImage from "../resources/default_profile_image.png";
+import errorImage from "../resources/no-photo.png";
 import SupportTierObject from "./SupportTierObject";
 import SupporterObject from "./SupporterObject";
+import { useAuthUserStore } from "../store";
 
 const Petition = () => {
+    const authUser = useAuthUserStore(state => state.authUser);
     const [petition, setPetition] = React.useState<SinglePetition>({} as SinglePetition);
     const [errorFlag, setErrorFlag] = React.useState(false)
     const [errorMessage, setErrorMessage] = React.useState("")
@@ -20,6 +23,8 @@ const Petition = () => {
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
     const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
     const [petitions, setPetitions] = React.useState<Array<Petition>>([]);
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false) 
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         axios.get(BASE_URL + "/petitions/" + id)
@@ -82,8 +87,8 @@ const Petition = () => {
                     (new_petition.ownerId === petition.ownerId || new_petition.categoryId === petition.categoryId) &&
                         new_petition.petitionId !== petition.petitionId));
             }, (error) => {
-                setErrorMessage(error.toString())
-            })
+                    setErrorMessage(error.toString())
+                })
     }, [petition])
 
     function formatDate(date: Date): string {
@@ -124,6 +129,27 @@ const Petition = () => {
         <PetitionsObject key={petition.petitionId} petition={petition} />
     )
 
+    const handleDeleteDialogOpen = (petition: Petition) => {
+        setOpenDeleteDialog(true);
+    }
+
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false);
+    }
+
+    const deletePetition = () => {
+        axios.delete(BASE_URL + "/petitions/" + petition.petitionId, {
+            headers: {
+                "X-Authorization": authUser?.token
+                }
+            })
+            .then((response) => {
+                navigate("/");
+            })
+            .catch((error) => {
+                console.error(error.toString());
+            })
+    }
 
     return (
         <div>
@@ -137,37 +163,44 @@ const Petition = () => {
                 </Alert>}
             <Paper style={paperStyle} elevation={3}>
                 <div style={{display:"flex", padding:"50px 50px 0 50px"}}>
-                    {petitionImageUrl &&
-                        <div>
+                    <div>
+                        <img
+                            src={petitionImageUrl}
+                            alt="Petition"
+                            onError={(e) => { (e.target as HTMLImageElement).src = errorImage }}
+                            style={{
+                                objectFit: "cover",
+                                width: "400px",
+                                height: "400px",
+                                borderRadius: "20px",
+                                marginBottom: "20px"
+                            }}
+                        />
+                        <Typography variant="body1">Owner</Typography>
+                        <Typography variant="h5">
+                            {petition.ownerFirstName} {petition.ownerLastName}
+                        </Typography>
+                        <div style={{display: "flex", justifyContent:"center", alignItems:"center", paddingTop:"10px"}}>
                             <img
-                                src={petitionImageUrl}
-                                alt="Petition"
+                                src={ownerImageUrl}
+                                alt="Owner"
                                 style={{
                                     objectFit: "cover",
-                                    width: "400px",
-                                    height: "400px",
-                                    borderRadius: "20px",
-                                    marginBottom: "20px"
+                                    width: "150px",
+                                    height: "150px",
+                                    borderRadius: "50%",
                                 }}
                             />
-                            <Typography variant="body1">Owner</Typography>
-                                <Typography variant="h5">
-                                    {petition.ownerFirstName} {petition.ownerLastName}
-                                </Typography>
-                            <div style={{display: "flex", justifyContent:"center", alignItems:"center", paddingTop:"10px"}}>
-                                <img
-                                    src={ownerImageUrl}
-                                    alt="Owner"
-                                    style={{
-                                        objectFit: "cover",
-                                        width: "150px",
-                                        height: "150px",
-                                        borderRadius: "50%",
-                                    }}
-                                />
-                            </div>
                         </div>
-                    }
+                        {authUser?.userId === petition.ownerId && petition.numberOfSupporters === 0 &&
+                            <Button
+                                variant="contained"
+                                color="error"
+                                style={{marginTop:"20px"}}
+                                onClick={() => setOpenDeleteDialog(true)}
+                            >Delete Petition</Button>
+                        }
+                    </div>
                     <div style={{width:"100%", height:"100%", marginLeft:"50px", textAlign:"left"}}>
                         <Typography variant="h2">{petition.title}</Typography>
                         <br />
@@ -212,6 +245,52 @@ const Petition = () => {
                     </div>
                 </div>
             </Paper>
+
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleDeleteDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{textAlign:"center"}}
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Delete Petition"}
+                </DialogTitle>
+                    <DialogContent
+                        style={{ display: "flex",
+                            flexDirection: "column",
+                            height: "100%",
+                            paddingBottom:"0"}}
+                    >
+                        <DialogContentText
+                            id="alert-dialog-description"
+                            style={{paddingTop:"10px"}}>
+                            Are you sure you want to delete this petition?
+                        </DialogContentText>
+                        <DialogActions style={{
+                            justifyContent:"center",
+                            height:"100%",
+                            paddingTop:"40px"
+                        }}>
+                            <Button
+                                style={{width:"100%", height:"50px"}}
+                                variant="outlined"
+                                onClick={handleDeleteDialogClose}>
+                                Cancel
+                            </Button>
+                            <Button
+                                style={{ width:"100%", height:"50px"}}
+                                variant="contained"
+                                color="error"
+                                disableElevation
+                                onClick={() => deletePetition()}>
+                                Delete
+                            </Button>
+                        </DialogActions>
+                    </DialogContent>
+                <DialogContent>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

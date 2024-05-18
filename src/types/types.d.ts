@@ -9,7 +9,8 @@ type Petition = {
     numberOfSupporters: number,
     creationDate: string,
     supportingCost: number,
-    description: string
+    description: string,
+    supporters: Supporter[]
 }
 
 type SupportTier = {

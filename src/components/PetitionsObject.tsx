@@ -1,6 +1,7 @@
 import React from "react";
 import "../App.css";
 import defaultImage from "../resources/default_profile_image.png";
+import errorImage from "../resources/no-photo.png"
 import axios from "axios";
 import CSS from 'csstype';
 import {Link, Card, Button, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
@@ -47,6 +48,17 @@ const PetitionsObject = (props: IPetitionProps) => {
             .catch(error => {
                 console.error(error.toString());
                 petition.description = "";
+            })
+        }, [])
+
+    React.useEffect(() => {
+        axios.get(BASE_URL + "/petitions/" + petition.petitionId + "/supporters")
+            .then(response => {
+                petition.supporters = response.data;
+            })
+            .catch(error => {
+                console.error(error.toString());
+                petition.supporters = [];
             })
         }, [])
 
@@ -103,6 +115,7 @@ const PetitionsObject = (props: IPetitionProps) => {
                     sx={{objectFit:"cover"}}
                     src={petitionImageUrl}
                     alt="Petition Image"
+                    onError={(e) => { (e.target as HTMLImageElement).src = errorImage }}
                 />
                 <CardContent style={{ display: "flex", flexDirection: "column", height: "90%" }}>
                     <div style={{ flexGrow: 1 }}>

@@ -18,6 +18,8 @@ const CreatePetition = () => {
     const [description, setDescription] = React.useState("");
     const [category, setCategory] = React.useState(Number(NaN));
     const [image, setImage] = React.useState<File | null>(null);
+    const [mainError, setMainError] = React.useState("");
+    const [mainErrorFlag, setMainErrorFlag] = React.useState(false);
 
     const [titleError, setTitleError] = React.useState("");
     const [descriptionError, setDescriptionError] = React.useState("");
@@ -106,8 +108,12 @@ const CreatePetition = () => {
                         "X-Authorization": authUser.token
                     }
                 }).then(response => {
+                    setMainError("");
+                    setMainErrorFlag(false);
+                    navigate("/");
                 }).catch(error => {
-                    // Handle error
+                    setMainError(error.toString());
+                    setMainErrorFlag(true);
                 });
         }
     }
@@ -282,6 +288,7 @@ const CreatePetition = () => {
                                 </AccordionDetails>
                             </Accordion>
                         </div>
+                        <Typography variant="subtitle1" style={{color:"#e15141"}}>{mainError}</Typography>
                         <div>
                             <Button
                                 variant="contained"

@@ -2,13 +2,16 @@ import React from "react";
 import axios from "axios";
 import CSS from "csstype";
 import PetitionsObject from "./PetitionsObject";
-import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button} from "@mui/material";
+import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Switch, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, FormControlLabel} from "@mui/material";
+
 import {Search} from "@mui/icons-material";
 import BASE_URL from '../config';
 import Navbar from './Navbar';
 import { useNavigate } from "react-router-dom";
+import { useAuthUserStore } from "../store";
 
 const Petitions = () => {
+    const authUser = useAuthUserStore(state => state.authUser);
     const [petitions, setPetitions] = React.useState<Array<Petition>>([])
     const [filteredPetitions, setFilteredPetitions] = React.useState<Array<Petition>>([])
     const [paginatedPetitions, setPaginatedPetitions] = React.useState<Array<Petition>>([])
@@ -20,9 +23,8 @@ const Petitions = () => {
     const [sortType, setSortType] = React.useState("CREATED_ASC")
     const [pageSize, setPageSize] = React.useState(10)
     const [pageNumber, setPageNumber] = React.useState(1)
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false) 
-    const [dialogPetition, setDialogPetition] = React.useState<Petition | null>(null)
     const [numberInputValue, setNumberInputValue] = React.useState("")
+    const [viewMyPetitions, setViewMyPetitions] = React.useState(false);
     const navigate = useNavigate();
 
     const getPetitions = () => {
@@ -65,12 +67,21 @@ const Petitions = () => {
                 petition.supportingCost <= maxSupportingCost);
         }
 
+        // View My Petitions toggled
+        if (viewMyPetitions && authUser) {
+            filtered = filtered.filter((petition) =>
+            petition.ownerId === authUser.userId ||
+            petition.supporters?.some((supporter) => supporter.supporterId === authUser.userId)
+            );
+            console.log(filtered);
+        }
+
         setFilteredPetitions(filtered);
 
         // Page number and size
         setPaginatedPetitions(filtered.slice(pageSize * (pageNumber - 1), pageSize * pageNumber));
 
-    }, [searchQuery, selectedCategories, maxSupportingCost, petitions, pageSize, pageNumber]);
+    }, [searchQuery, selectedCategories, maxSupportingCost, petitions, pageSize, pageNumber, viewMyPetitions]);
 
     const petition_rows = () => paginatedPetitions.map((petition: Petition) =>
         <PetitionsObject key={petition.petitionId} petition={petition} />
@@ -103,26 +114,18 @@ const Petitions = () => {
 
     const handleSortTypeChange = (event: SelectChangeEvent) => {
         setSortType(event.target.value);
-    };
-
-    const handleDeleteDialogOpen = (petition: Petition) => {
-        setOpenDeleteDialog(true);
-        setDialogPetition(petition);
-    }
-
-    const handleDeleteDialogClose = () => {
-        setDialogPetition(null);
-        setOpenDeleteDialog(false);
-    }
-
-    const deletePetition = (petition: Petition) => {
-        // Check that the petition does not have any supporters
-
     }
 
     const handlePageSizeChange = (event: any) => {
         setPageSize(event.target.value as number);
         setPageNumber(1);
+    }
+
+    const handleViewMyPetitions = () => {
+        setSearchQuery("");
+        setMaxSupportingCost(NaN);
+        setSelectedCategories([]);
+        setViewMyPetitions(!viewMyPetitions);
     }
 
     return (
@@ -138,6 +141,7 @@ const Petitions = () => {
                         id="search-bar"
                         style={{width:"30%"}}
                         placeholder="Search"
+                        value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
                         startAdornment={
                             <InputAdornment position="start">
@@ -184,6 +188,10 @@ const Petitions = () => {
                         <ToggleButton value="10">Science and Research</ToggleButton>
                         <ToggleButton value="11">Sports and Recreation</ToggleButton>
                     </ToggleButtonGroup>
+                    <FormControlLabel control={<Switch
+                        checked={viewMyPetitions}
+                        onChange={handleViewMyPetitions}
+                    />} label="View My Petitions" />
                     <Button
                         variant="contained"
                         color="success"
@@ -229,53 +237,6 @@ const Petitions = () => {
                         count={Math.ceil(filteredPetitions.length / pageSize)} />
                 </div>
             </Paper>
-            <Dialog
-                open={openDeleteDialog}
-                onClose={handleDeleteDialogClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                style={{textAlign:"center"}}
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Delete Petition"}
-                </DialogTitle>
-                    {dialogPetition && (
-                        <DialogContent
-                            style={{ display: "flex",
-                                flexDirection: "column",
-                                height: "100%",
-                                paddingBottom:"0"}}
-                        >
-                            <DialogContentText
-                                id="alert-dialog-description"
-                                style={{paddingTop:"10px"}}>
-                                Are you sure you want to delete this petition?
-                            </DialogContentText>
-                            <DialogActions style={{
-                                justifyContent:"center",
-                                height:"100%",
-                                paddingTop:"40px"
-                            }}>
-                                <Button
-                                    style={{width:"100%", height:"50px"}}
-                                    variant="outlined"
-                                    onClick={handleDeleteDialogClose}>
-                                    Cancel
-                                </Button>
-                                <Button
-                                    style={{ width:"100%", height:"50px"}}
-                                    variant="contained"
-                                    color="error"
-                                    disableElevation
-                                    onClick={() => deletePetition(dialogPetition)}>
-                                    Delete
-                                </Button>
-                            </DialogActions>
-                        </DialogContent>
-                    )}
-                <DialogContent>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }

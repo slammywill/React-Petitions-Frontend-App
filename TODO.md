@@ -66,14 +66,14 @@
 # Managing Petitions
 
 ## U12 Create
-- [ ] The user must first be logged in.
-- [ ] The user must provide valid information to create the petition (with required attributes bolded).
+- [x] The user must first be logged in.
+- [x] The user must provide valid information to create the petition (with required attributes bolded).
     - Title – Must be unique.
     - Description
     - CategoryId – Must reference a category accepted by the server.
     - supportTiers – There must be between 1-3 (inclusive) support tiers provided.
     - Image – Must only accept png, jpeg, gif
-- [ ] The petition must then be included in the list of auctions and works with searching, filtering, sorting, and pagination.
+- [x] The petition must then be included in the list of auctions and works with searching, filtering, sorting, and pagination.
 
 ## U13 Edit
 - [ ] Only the owner of the petition can edit it.
@@ -84,14 +84,14 @@
     - May only be deleted, if the specified support tier has no supporters and the petition currently has more than 1 support tier.
 
 ## U14 Delete
-- [ ] Only the owner of a petition can delete it.
-- [ ] The owner must be prompted to confirm the action.
-- [ ] A petition can not be deleted once a supporter has supported at any tier.
+- [x] Only the owner of a petition can delete it.
+- [x] The owner must be prompted to confirm the action.
+- [x] A petition can not be deleted once a supporter has supported at any tier.
 
 ## U15 My Petitions
-- [ ] A registered user must have some way of viewing only and all the petitions they are ’involved’ with, either as a owner or a supporter.
-- [ ] Each petition must be shown with the same information that can be seen from the list of petitions in Story 2 (there are no requirements for searching, filtering, sorting, or pagination). 
-- [ ] There should be an easy way to view the details of any of these petitions (Story 7).
+- [x] A registered user must have some way of viewing only and all the petitions they are ’involved’ with, either as a owner or a supporter.
+- [x] Each petition must be shown with the same information that can be seen from the list of petitions in Story 2 (there are no requirements for searching, filtering, sorting, or pagination). 
+- [x] There should be an easy way to view the details of any of these petitions (Story 7).
 
 # Supporting a Petition
 
@@ -101,7 +101,7 @@
 - [ ] Users can support a petition without leaving a message.
 - [ ] An owner can not support their own petition.
 - [ ] A user cannot change or delete their support.
-- [ ]  user may support a petition at any number of its tiers, however a user can only support at each unique tier once.
+- [ ] A user may support a petition at any number of its tiers, however a user can only support at each unique tier once.
 
 # Managing User Profile
 
