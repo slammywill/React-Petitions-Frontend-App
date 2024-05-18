@@ -1,18 +1,19 @@
 import Navbar from "./Navbar";
-import {FormHelperText, Paper, Typography, FormControl, Link, TextField, Button} from "@mui/material";
+import {FormHelperText, Paper, Typography, FormControl, Link, TextField, Button, Avatar} from "@mui/material";
 import CSS from "csstype";
 import React from "react";
 import * as EmailValidator from "email-validator";
 import BASE_URL from "../config";
 import axios from "axios";
 import { useAuthUserStore } from "../store";
-import { warn } from "console";
 import { useNavigate } from "react-router-dom";
+import defaultImage from "../resources/default_profile_image.png";
 
 const Register = () => {
     const authUser = useAuthUserStore(state => state.authUser);
     const setAuthUser = useAuthUserStore(state => state.setAuthUser);
     const navigate = useNavigate();
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -25,6 +26,9 @@ const Register = () => {
     const [passwordErrorFlag, setPasswordErrorFlag] = React.useState(false);
     const [registerError, setRegisterError] = React.useState("");
     const [registerErrorFlag, setRegisterErrorFlag] = React.useState(false);
+    const [registered, setRegistered] = React.useState(false);
+
+    const [profileImage, setProfileImage] = React.useState<File | null> (null);
 
     const paperStyle: CSS.Properties = {
         padding: "50px",
@@ -44,6 +48,49 @@ const Register = () => {
         }
     }, [])
 
+    function getMimeTypeFromExtension(file: File) {
+        const filename = file.name.toLowerCase();
+        const extension = filename.split('.').pop();
+        switch (extension) {
+            case 'jpg':
+            case 'jpeg':
+                return 'image/jpeg';
+            case 'png':
+                return 'image/png';
+            case 'gif':
+                return 'image/gif';
+        }
+    }
+
+    React.useEffect(() => {
+        if (authUser && authUser.userId && profileImage) {
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                if (event.target) {
+                    const binaryData = event.target.result;
+
+                    axios.put(BASE_URL + "/users/" + authUser.userId + "/image", binaryData, {
+                        headers: {
+                            "Content-Type": getMimeTypeFromExtension(profileImage),
+                            "X-Authorization": authUser.token
+                        },
+                    }).then(response => {
+                            console.log("Image uploaded successfully:", response);
+                        }).catch(error => {
+                            console.error("Error uploading image:", error);
+                        });
+                };
+            }
+
+            reader.onerror = (error) => {
+                console.error("Error reading the file:", error);
+            };
+
+            reader.readAsBinaryString(profileImage);
+        }
+    }, [authUser]);
+
     const handleCreateAccount = () => {
         axios.post(BASE_URL + "/users/register", {
             email: email,
@@ -52,13 +99,35 @@ const Register = () => {
             password: password
         })
             .then((response) => {
-                setAuthUser(response.data);
-                navigate("/");
-            }
-            )
+                setRegistered(true);
+            })
             .catch(error => {
+                if (error.response.status === 400) {
+                    setRegisterError("Bad Request: Invalid information");
+                } else if (error.response.status === 403) {
+                    setEmailError("This email address is already in use");
+                    setEmailErrorFlag(true);
+                } else if (error.response.status === 500) {
+                    setRegisterError("Server Error");
+                } else {
+                    setRegisterError(error.toString());
+                }
             })
     }
+
+    React.useEffect(() => {
+        if (registered) {
+            axios.post(BASE_URL + "/users/login", {
+                email: email,
+                password: password
+            })
+                .then((response) => {
+                    setAuthUser(response.data);
+                    navigate("/");
+                })
+        }
+    }, [registered]);
+
 
     const validateEmail = (value: string) => {
         setEmail(value);
@@ -91,7 +160,7 @@ const Register = () => {
             <div style={{justifyContent:"center", width:"fill", alignItems:"center", display:"flex"}}>
                 <Paper style={paperStyle} elevation={3}>
                     <Typography variant="h2">Register</Typography>
-                    <FormControl style={{display:"flex",  margin:"50px 0 0 0"}}>
+                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
                         <TextField
                             label="First Name"
                             size="medium"
@@ -101,7 +170,7 @@ const Register = () => {
                             onChange={(event) => setFirstName(event.target.value)}
                         />
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"50px 0 0 0"}}>
+                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
                         <TextField
                             label="Last Name"
                             size="medium"
@@ -111,7 +180,7 @@ const Register = () => {
                             onChange={(event) => setLastName(event.target.value)}
                         />
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"50px 0 0 0"}}>
+                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
                         <TextField
                             error={!!emailErrorFlag && email !== ""}
                             label="Email Address"
@@ -125,7 +194,7 @@ const Register = () => {
                         />
                         <FormHelperText id="email-error-text" style={{color:"#e15141"}}>{email !== "" && emailError}</FormHelperText>
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"50px 0 0 0"}}>
+                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
                         <TextField
                             error={!!passwordErrorFlag && password !== ""}
                             label="Password"
@@ -138,8 +207,29 @@ const Register = () => {
                             onBlur={(event) => validatePassword(event.target.value)}
                         />
                     </FormControl>
-                        <FormHelperText id="password-error-text" style={{color:"#e15141"}}>{password !== "" && passwordError}</FormHelperText>
-                        <Typography variant="body1" style={{color:"#e15141"}}>{registerError}</Typography>
+                    <FormHelperText id="password-error-text" style={{color:"#e15141"}}>{password !== "" && passwordError}</FormHelperText>
+                    <Typography variant="body1" style={{color:"#e15141"}}>{registerError}</Typography>
+                    <Typography variant="h6" style={{marginTop:"30px"}}>Add a Profile Picture</Typography>
+                    <Typography variant="h6">(Optional)</Typography>
+                    <div style={{display:"flex", alignItems:"center", margin: "20px", justifyContent:"center"}}>
+                        <Avatar
+                            alt="Profile Picture"
+                            src={profileImage ? URL.createObjectURL(profileImage) : defaultImage}
+                            style={{objectFit:"cover", width:"200px", height:"200px", borderRadius:"50%"}}
+                            onClick={() => fileInputRef.current?.click()}
+                        />
+                        <input
+                            type="file"
+                            accept="image/jpeg, image/jpg, image/png, image/gif"
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
+                            onChange={(e) => {
+                                if (e.target.files && e.target.files.length > 0) {
+                                    setProfileImage(e.target.files[0]);
+                                }
+                            }}
+                        />
+                    </div>
                     <div>
                         <Button
                             disabled={!!emailErrorFlag || lastName === "" || firstName === "" || !!passwordErrorFlag}
@@ -147,9 +237,9 @@ const Register = () => {
                             size="large"
                             onClick={handleCreateAccount}
                             style={{
-                                marginTop:"50px",
+                                marginTop:"30px",
                                 width:"50%",
-                                marginBottom:"50px"
+                                marginBottom:"30px"
                             }}
                         >
                             Register Account
@@ -160,6 +250,8 @@ const Register = () => {
                             Already have an account?
                         </Typography>
                     </Link>
+                    <div>
+                    </div>
                 </Paper>
             </div>
         </div>

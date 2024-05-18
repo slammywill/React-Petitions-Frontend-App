@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Petition from "./components/Petition";
 import NotFound from "./components/NotFound";
+import CreatePetition from "./components/CreatePetition";
 import './globalStyles.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/login"      element={<Login/>}/>
                         <Route path="/profile" element={<Profile/>}/>
                         <Route path="/petitions/:id"   element={<Petition/>}/>
+                        <Route path="/createPetition" element={<CreatePetition/>}/>
                         <Route path="*"           element={<NotFound/>}/>
                     </Routes>
                 </div>

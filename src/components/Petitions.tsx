@@ -6,6 +6,7 @@ import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdor
 import {Search} from "@mui/icons-material";
 import BASE_URL from '../config';
 import Navbar from './Navbar';
+import { useNavigate } from "react-router-dom";
 
 const Petitions = () => {
     const [petitions, setPetitions] = React.useState<Array<Petition>>([])
@@ -22,6 +23,7 @@ const Petitions = () => {
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false) 
     const [dialogPetition, setDialogPetition] = React.useState<Petition | null>(null)
     const [numberInputValue, setNumberInputValue] = React.useState("")
+    const navigate = useNavigate();
 
     const getPetitions = () => {
         axios.get(BASE_URL + "/petitions", {
@@ -131,8 +133,10 @@ const Petitions = () => {
             <Paper elevation={3} style={paperStyle} >
                 <h1>Petition List</h1>
                 <div id="search-items" >
+                    <div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
                     <Input
                         id="search-bar"
+                        style={{width:"30%"}}
                         placeholder="Search"
                         onChange={(event) => setSearchQuery(event.target.value)}
                         startAdornment={
@@ -141,7 +145,6 @@ const Petitions = () => {
                             </InputAdornment>
                         }
                     />
-                    <div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
                         <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
                         <Input
                             size="small"
@@ -181,6 +184,14 @@ const Petitions = () => {
                         <ToggleButton value="10">Science and Research</ToggleButton>
                         <ToggleButton value="11">Sports and Recreation</ToggleButton>
                     </ToggleButtonGroup>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        size="large"
+                        style={{margin:"20px 0 20px 0"}}
+                        onClick={() => navigate("/createPetition")}
+                    >Create Petition
+                    </Button>
                 </div>
                 <div style={{ display: "inline-block",  minWidth: "320px" }}>
                     {errorFlag?

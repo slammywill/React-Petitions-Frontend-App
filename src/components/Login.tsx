@@ -65,7 +65,7 @@ const Login = () => {
             <div style={{justifyContent:"center", width:"fill", alignItems:"center", display:"flex"}}>
                 <Paper style={paperStyle} elevation={3}>
                     <Typography variant="h2">Login</Typography>
-                    <FormControl style={{display:"flex",  margin:"50px 0 50px 0"}}>
+                    <FormControl style={{display:"flex",  margin:"30px 0 30px 0"}}>
                         <TextField
                             label="Email Address"
                             size="medium"
@@ -97,9 +97,9 @@ const Login = () => {
                             size="large"
                             onClick={handleLoginSubmit}
                             style={{
-                                marginTop:"50px",
+                                marginTop:"30px",
                                 width:"30%",
-                                marginBottom:"50px"
+                                marginBottom:"30px"
                             }}
                         >
                             Log In

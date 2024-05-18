@@ -18,6 +18,11 @@ const Navbar = () => {
         setOpenLogoutDialog(false);
     }
 
+    const handleLogOut = () => {
+        removeAuthUser();
+        setOpenLogoutDialog(false);
+    }
+
     // Go back to last page on modal buttons
 
     return (
@@ -76,7 +81,7 @@ const Navbar = () => {
                                 variant="contained"
                                 color="error"
                                 disableElevation
-                                onClick={() => removeAuthUser()}>
+                                onClick={handleLogOut}>
                                 Log Out
                             </Button>
                         </DialogActions>
