@@ -48,3 +48,9 @@ type AuthUser = {
     userId: number,
     token: string
 }
+
+type User = {
+    email: string,
+    firstName: string,
+    lastName: string
+}

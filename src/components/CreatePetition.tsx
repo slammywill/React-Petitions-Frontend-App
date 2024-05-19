@@ -1,4 +1,4 @@
-import {Alert, AlertTitle, Paper, Avatar, TextField, Typography, FormHelperText, FormControl, Button, Link, MenuItem, Select, SelectChangeEvent, Table, TableCell, TableRow, TableBody, TableHead, Accordion, AccordionSummary, AccordionDetails} from "@mui/material";
+import { Alert, AlertTitle, Paper, Avatar, TextField, Typography, FormHelperText, FormControl, Button, Link, MenuItem, Select, SelectChangeEvent, Table, TableCell, TableRow, TableBody, TableHead, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import CSS from "csstype";
 import Navbar from "./Navbar";
 import React from "react"
@@ -47,7 +47,7 @@ const CreatePetition = () => {
         margin: "100px",
         display: "grid",
         width: "33%",
-        minWidth:"400px"
+        minWidth: "400px"
     }
 
     const validateTitle = () => {
@@ -104,17 +104,17 @@ const CreatePetition = () => {
                 categoryId: category,
                 supportTiers: supportTiers
             }, {
-                    headers: {
-                        "X-Authorization": authUser.token
-                    }
-                }).then(response => {
-                    setMainError("");
-                    setMainErrorFlag(false);
-                    navigate("/");
-                }).catch(error => {
-                    setMainError(error.toString());
-                    setMainErrorFlag(true);
-                });
+                headers: {
+                    "X-Authorization": authUser.token
+                }
+            }).then(response => {
+                setMainError("");
+                setMainErrorFlag(false);
+                navigate("/");
+            }).catch(error => {
+                setMainError(error.toString());
+                setMainErrorFlag(true);
+            });
         }
     }
 
@@ -158,31 +158,31 @@ const CreatePetition = () => {
                 <Navbar />
             </div>
             {!authUser &&
-                <div style={{display:"flex", justifyContent:"center", marginTop:"20px"}}>
-                    <Alert severity = "error" style={{paddingRight:"50px"}}>
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                    <Alert severity="error" style={{ paddingRight: "50px" }}>
                         <AlertTitle>Error</AlertTitle>
                         You must be logged in to create a petition
                     </Alert>
                 </div>
             }
             {authUser &&
-                <div style={{justifyContent:"center", width:"fill", alignItems:"center", display:"flex"}}>
+                <div style={{ justifyContent: "center", width: "fill", alignItems: "center", display: "flex" }}>
                     <Paper style={paperStyle} elevation={3}>
                         <Typography variant="h2">Create Petition</Typography>
-                        <FormControl style={{display:"flex",  margin:"50px 0 0 0"}}>
+                        <FormControl style={{ display: "flex", margin: "50px 0 0 0" }}>
                             <TextField
                                 label="Title"
                                 error={!!titleErrorFlag}
                                 size="medium"
                                 placeholder="Enter a title..."
-                                style={{width:"100%"}}
+                                style={{ width: "100%" }}
                                 aria-describedby="title-error-text"
                                 onChange={(event) => setTitle(event.target.value)}
                                 onBlur={validateTitle}
                             />
-                            <FormHelperText style={{color:"#e15141"}} id="title-error-text">{titleError}</FormHelperText>
+                            <FormHelperText style={{ color: "#e15141" }} id="title-error-text">{titleError}</FormHelperText>
                         </FormControl>
-                        <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
+                        <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                             <TextField
                                 label="Description"
                                 multiline
@@ -190,18 +190,18 @@ const CreatePetition = () => {
                                 error={!!descriptionErrorFlag}
                                 size="medium"
                                 placeholder="Enter a description..."
-                                style={{width:"100%"}}
+                                style={{ width: "100%" }}
                                 onChange={(event) => setDescription(event.target.value)}
                                 onBlur={validateDescription}
                             />
-                            <FormHelperText style={{color:"#e15141"}} id="description-error-text">{descriptionError}</FormHelperText>
+                            <FormHelperText style={{ color: "#e15141" }} id="description-error-text">{descriptionError}</FormHelperText>
                         </FormControl>
-                        <FormControl style={{display:"flex", margin:"30px 25% 0 25%"}}>
+                        <FormControl style={{ display: "flex", margin: "30px 25% 0 25%" }}>
                             <Typography variant="subtitle1">Category</Typography>
-                            <Select 
+                            <Select
                                 size="medium"
                                 id="selectCategory"
-                                value={category? category.toString() : ""}
+                                value={category ? category.toString() : ""}
                                 fullWidth
                                 onChange={handleCategoryChange}
                             >
@@ -219,43 +219,43 @@ const CreatePetition = () => {
                                 <MenuItem value={12}>Sports and Recreation</MenuItem>
                             </Select>
                         </FormControl>
-                            <Typography variant="subtitle1" style={{marginTop:"30px"}}>Upload a Picture</Typography>
-                        <div style={{display:"flex", justifyContent:"center"}}>
-                        <Avatar
-                            alt="Profile Picture"
-                            variant="rounded"
-                            src={image ? URL.createObjectURL(image) : undefined}
-                            style={{objectFit:"cover", width:"400px", height:"400px", border: "1px solid #555555", backgroundColor: "#141414"}}
-                            onClick={() => fileInputRef.current?.click()}
-                        >
-                        <InsertPhoto sx={{fontSize: 100, color: "white"}}/>
-                        </Avatar>
-                        <input
-                            type="file"
-                            accept="image/jpeg, image/jpg, image/png, image/gif"
-                            style={{ display: "none" }}
-                            ref={fileInputRef}
-                            onChange={(e) => {
-                                if (e.target.files && e.target.files.length > 0) {
-                                    setImage(e.target.files[0]);
-                                }
-                            }}
-                        />
+                        <Typography variant="subtitle1" style={{ marginTop: "30px" }}>Upload a Picture</Typography>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                            <Avatar
+                                alt="Profile Picture"
+                                variant="rounded"
+                                src={image ? URL.createObjectURL(image) : undefined}
+                                style={{ objectFit: "cover", width: "400px", height: "400px", border: "1px solid #555555", backgroundColor: "#141414" }}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <InsertPhoto sx={{ fontSize: 100, color: "white" }} />
+                            </Avatar>
+                            <input
+                                type="file"
+                                accept="image/jpeg, image/jpg, image/png, image/gif"
+                                style={{ display: "none" }}
+                                ref={fileInputRef}
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files.length > 0) {
+                                        setImage(e.target.files[0]);
+                                    }
+                                }}
+                            />
                         </div>
                         <div>
-                            <Typography variant="subtitle1" style={{marginTop: "30px"}}>Support Tiers</Typography>
+                            <Typography variant="subtitle1" style={{ marginTop: "30px" }}>Support Tiers</Typography>
                             <Typography variant="body2" >Add 1-3 support tiers for your supporters</Typography>
-                            <Accordion style={{marginTop:"10px"}}>
+                            <Accordion style={{ marginTop: "10px" }}>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >Support Tier 1
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <TextField fullWidth label="Title" onChange={(e) => setT1Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{marginTop:"5px"}} onChange={(e) => setT1Description(e.target.value)} />
+                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT1Description(e.target.value)} />
                                     <TextField fullWidth label="Cost"
                                         value={t1CostValue}
-                                        style={{marginTop:"5px"}}
+                                        style={{ marginTop: "5px" }}
                                         onChange={handleT1CostChange} />
                                 </AccordionDetails>
                             </Accordion>
@@ -266,10 +266,10 @@ const CreatePetition = () => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <TextField fullWidth label="Title" onChange={(e) => setT2Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{marginTop:"5px"}} onChange={(e) => setT2Description(e.target.value)} />
+                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT2Description(e.target.value)} />
                                     <TextField fullWidth label="Cost"
                                         value={t2CostValue}
-                                        style={{marginTop:"5px"}}
+                                        style={{ marginTop: "5px" }}
                                         onChange={handleT2CostChange} />
                                 </AccordionDetails>
                             </Accordion>
@@ -280,23 +280,23 @@ const CreatePetition = () => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <TextField fullWidth label="Title" onChange={(e) => setT3Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{marginTop:"5px"}} onChange={(e) => setT3Description(e.target.value)} />
+                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT3Description(e.target.value)} />
                                     <TextField fullWidth label="Cost"
                                         value={t3CostValue}
-                                        style={{marginTop:"5px"}}
+                                        style={{ marginTop: "5px" }}
                                         onChange={handleT3CostChange} />
                                 </AccordionDetails>
                             </Accordion>
                         </div>
-                        <Typography variant="subtitle1" style={{color:"#e15141"}}>{mainError}</Typography>
+                        <Typography variant="subtitle1" style={{ color: "#e15141" }}>{mainError}</Typography>
                         <div>
                             <Button
                                 variant="contained"
                                 size="large"
                                 onClick={handleCreatePetition}
                                 style={{
-                                    marginTop:"30px",
-                                    width:"50%",
+                                    marginTop: "30px",
+                                    width: "50%",
                                 }}
                             >
                                 Create Petition

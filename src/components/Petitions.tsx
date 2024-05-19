@@ -2,9 +2,9 @@ import React from "react";
 import axios from "axios";
 import CSS from "csstype";
 import PetitionsObject from "./PetitionsObject";
-import {Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Switch, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, FormControlLabel} from "@mui/material";
+import { Paper, AlertTitle, Alert, MenuItem, Select, SelectChangeEvent, InputAdornment, Switch, Input, ToggleButtonGroup, ToggleButton, Pagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, FormControlLabel } from "@mui/material";
 
-import {Search} from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import BASE_URL from '../config';
 import Navbar from './Navbar';
 import { useNavigate } from "react-router-dom";
@@ -49,14 +49,14 @@ const Petitions = () => {
 
     React.useEffect(() => {
         // Search query
-        let filtered = petitions.filter((petition) => 
+        let filtered = petitions.filter((petition) =>
             petition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (petition.description && petition.description.toLowerCase().includes(searchQuery.toLowerCase()))
         );
 
         // Categories
         if (selectedCategories.length > 0) {
-            filtered = filtered.filter((petition) => 
+            filtered = filtered.filter((petition) =>
                 selectedCategories.includes(petition.categoryId.toString())
             );
         }
@@ -70,8 +70,8 @@ const Petitions = () => {
         // View My Petitions toggled
         if (viewMyPetitions && authUser) {
             filtered = filtered.filter((petition) =>
-            petition.ownerId === authUser.userId ||
-            petition.supporters?.some((supporter) => supporter.supporterId === authUser.userId)
+                petition.ownerId === authUser.userId ||
+                petition.supporters?.some((supporter) => supporter.supporterId === authUser.userId)
             );
             console.log(filtered);
         }
@@ -136,28 +136,28 @@ const Petitions = () => {
             <Paper elevation={3} style={paperStyle} >
                 <h1>Petition List</h1>
                 <div id="search-items" >
-                    <div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
-                    <Input
-                        id="search-bar"
-                        style={{width:"30%"}}
-                        placeholder="Search"
-                        value={searchQuery}
-                        onChange={(event) => setSearchQuery(event.target.value)}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <Search /> 
-                            </InputAdornment>
-                        }
-                    />
-                        <p style={{marginLeft: "10px", marginRight: "10px"}}>Supporting Cost &lt;= </p>
+                    <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                        <Input
+                            id="search-bar"
+                            style={{ width: "30%" }}
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(event) => setSearchQuery(event.target.value)}
+                            startAdornment={
+                                <InputAdornment position="start">
+                                    <Search />
+                                </InputAdornment>
+                            }
+                        />
+                        <p style={{ marginLeft: "10px", marginRight: "10px" }}>Supporting Cost &lt;= </p>
                         <Input
                             size="small"
                             value={numberInputValue}
                             placeholder="Type a number..."
                             onChange={handleMaxSupportingCostChange}
                         />
-                        <p style={{marginLeft: "10px", marginRight: "10px"}}>Sort By: </p>
-                        <Select 
+                        <p style={{ marginLeft: "10px", marginRight: "10px" }}>Sort By: </p>
+                        <Select
                             size="small"
                             value={sortType}
                             onChange={handleSortTypeChange}
@@ -174,7 +174,7 @@ const Petitions = () => {
                         onChange={handleCategorySelection}
                         color="primary"
                         value={selectedCategories}
-                        style={{margin:"10px"}}
+                        style={{ margin: "10px" }}
                     >
                         <ToggleButton value="1">Wildlife</ToggleButton>
                         <ToggleButton value="2">Environmental Causes</ToggleButton>
@@ -196,26 +196,26 @@ const Petitions = () => {
                         variant="contained"
                         color="success"
                         size="large"
-                        style={{margin:"20px 0 20px 0"}}
+                        style={{ margin: "20px 0 20px 0" }}
                         onClick={() => navigate("/createPetition")}
                     >Create Petition
                     </Button>
                 </div>
-                <div style={{ display: "inline-block",  minWidth: "320px" }}>
-                    {errorFlag?
-                        <Alert severity = "error">
+                <div style={{ display: "inline-block", minWidth: "320px" }}>
+                    {errorFlag ?
+                        <Alert severity="error">
                             <AlertTitle>Error</AlertTitle>
-                            { errorMessage }
-                        </Alert>: ""}
-                    { petition_rows() }
+                            {errorMessage}
+                        </Alert> : ""}
+                    {petition_rows()}
                 </div>
                 {pageNumber === Math.ceil(filteredPetitions.length / pageSize) && (
-                    <p style={{color:"grey"}}>There are no more petitions</p>
+                    <p style={{ color: "grey" }}>There are no more petitions</p>
                 )}
                 <div>
-                    <div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
-                        <p style={{marginRight: "10px"}}>Petitions per page: </p>
-                        <Select 
+                    <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+                        <p style={{ marginRight: "10px" }}>Petitions per page: </p>
+                        <Select
                             value={pageSize}
                             onChange={handlePageSizeChange}
                             size="small"
@@ -228,12 +228,12 @@ const Petitions = () => {
                             <MenuItem value={10}>10</MenuItem>
                         </Select>
                     </div>
-                    <Pagination 
+                    <Pagination
                         page={pageNumber}
                         showFirstButton
                         showLastButton
                         onChange={(event, value) => setPageNumber(value)}
-                        style={{display: "flex", justifyContent: "center", marginTop: "10px"}}
+                        style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
                         count={Math.ceil(filteredPetitions.length / pageSize)} />
                 </div>
             </Paper>

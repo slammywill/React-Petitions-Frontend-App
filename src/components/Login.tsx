@@ -1,4 +1,4 @@
-import { Paper, TextField, Typography, FormHelperText, FormControl, Button, Link} from "@mui/material";
+import { Paper, TextField, Typography, FormHelperText, FormControl, Button, Link } from "@mui/material";
 import CSS from "csstype";
 import Navbar from "./Navbar";
 import React from "react"
@@ -24,7 +24,7 @@ const Login = () => {
         margin: "100px",
         display: "grid",
         width: "33%",
-        minWidth:"400px"
+        minWidth: "400px"
     }
 
     const handleLoginSubmit = () => {
@@ -62,44 +62,44 @@ const Login = () => {
             <div>
                 <Navbar />
             </div>
-            <div style={{justifyContent:"center", width:"fill", alignItems:"center", display:"flex"}}>
+            <div style={{ justifyContent: "center", width: "fill", alignItems: "center", display: "flex" }}>
                 <Paper style={paperStyle} elevation={3}>
                     <Typography variant="h2">Login</Typography>
-                    <FormControl style={{display:"flex",  margin:"30px 0 30px 0"}}>
+                    <FormControl style={{ display: "flex", margin: "30px 0 30px 0" }}>
                         <TextField
                             label="Email Address"
                             size="medium"
                             placeholder="Enter your email address..."
                             type="email"
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="email-error-text"
                             onChange={(event) => setEmail(event.target.value)}
                         />
                         <FormHelperText id="email-error-text">{emailError}</FormHelperText>
                     </FormControl>
-                    <FormControl style={{display:"flex"}}>
+                    <FormControl style={{ display: "flex" }}>
                         <TextField
                             label="Password"
                             size="medium"
                             placeholder="Enter your password..."
                             type="password"
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="password-error-text"
                             onChange={(event) => setPassword(event.target.value)}
 
                         />
                         <FormHelperText id="password-error-text">{passwordError}</FormHelperText>
                     </FormControl>
-                    <Typography variant="body2" style={{color:"#e15141", marginTop:"10px"}}><i>{loginError}</i></Typography>
+                    <Typography variant="body2" style={{ color: "#e15141", marginTop: "10px" }}><i>{loginError}</i></Typography>
                     <div>
                         <Button
                             variant="outlined"
                             size="large"
                             onClick={handleLoginSubmit}
                             style={{
-                                marginTop:"30px",
-                                width:"30%",
-                                marginBottom:"30px"
+                                marginTop: "30px",
+                                width: "30%",
+                                marginBottom: "30px"
                             }}
                         >
                             Log In

@@ -18,7 +18,7 @@ const SupportTierObject = (props: ISupportTierProps) => {
             <AccordionDetails>
                 <Typography variant="subtitle1">{supportTier.description}</Typography>
                 <br />
-                <div style={{alignItems:"center"}}>
+                <div style={{ alignItems: "center" }}>
                     <Typography variant="subtitle1" >Cost: ${supportTier.cost}.00</Typography>
                 </div>
             </AccordionDetails>

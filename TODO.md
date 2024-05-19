@@ -106,24 +106,24 @@
 # Managing User Profile
 
 ## U17 View
-- [ ] An authenticated user can view their own information, composed of:
+- [x] An authenticated user can view their own information, composed of:
     - First name
     - Last name
     - Email
     - Profile picture (or a default one, if none exists)
-- [ ] No one else can view another user’s information (except when it it included as part of a petition where they are the owner or a supporter, in either case only the user’s first and last name and profile picture are displayed).
+- [x] No one else can view another user’s information (except when it it included as part of a petition where they are the owner or a supporter, in either case only the user’s first and last name and profile picture are displayed).
 
 ## U18 Edit
-- [ ] An authenticated user can edit their own information. This can be any of:
+- [x] An authenticated user can edit their own information. This can be any of:
     - Profile picture
     - First name
     - Last name
     - Email
     - Password
-- [ ] If a profile picture exists it can be removed.
-- [ ] The email address must not already be in use by another user.
-- [ ] The email address must be syntactically valid (See Story 9).
-- [ ] If the password is being updated, the existing password must be provided and correct.
-- [ ] The password must be at least 6 characters.
-- [ ] The password must not be displayed in plain text (See Story 9).
-- [ ] A user can not modify another user’s information.
+- [x] If a profile picture exists it can be removed.
+- [x] The email address must not already be in use by another user.
+- [x] The email address must be syntactically valid (See Story 9).
+- [x] If the password is being updated, the existing password must be provided and correct.
+- [x] The password must be at least 6 characters.
+- [x] The password must not be displayed in plain text (See Story 9).
+- [x] A user can not modify another user’s information.

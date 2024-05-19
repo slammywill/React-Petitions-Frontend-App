@@ -38,8 +38,8 @@ const SupporterObject = (props: ISupporterProps) => {
     }
 
     React.useEffect(() => {
-        axios.get(BASE_URL + "/users/" + supporter.supporterId + "/image", {responseType: 'blob' })
-            .then( response =>  {
+        axios.get(BASE_URL + "/users/" + supporter.supporterId + "/image", { responseType: 'blob' })
+            .then(response => {
                 const url = URL.createObjectURL(response.data);
                 setSupporterImageUrl(url);
             })
@@ -53,13 +53,13 @@ const SupporterObject = (props: ISupporterProps) => {
             key={supporter.timestamp}
         >
             <TableCell>
-                <div style={{display:"flex", alignItems:"center"}}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                     <img
                         src={supporterImageUrl}
                         alt=""
                         id="profile-image"
                         onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
-                        style={{marginRight:"10px"}}
+                        style={{ marginRight: "10px" }}
                     /> {supporter.supporterFirstName} {supporter.supporterLastName}
                 </div>
             </TableCell>
