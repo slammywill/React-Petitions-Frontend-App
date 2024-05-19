@@ -1,5 +1,14 @@
 import Navbar from "./Navbar";
-import {FormHelperText, Paper, Typography, FormControl, Link, TextField, Button, Avatar} from "@mui/material";
+import {
+    FormHelperText,
+    Paper,
+    Typography,
+    FormControl,
+    Link,
+    TextField,
+    Button,
+    Avatar,
+} from "@mui/material";
 import CSS from "csstype";
 import React from "react";
 import * as EmailValidator from "email-validator";
@@ -10,8 +19,8 @@ import { useNavigate } from "react-router-dom";
 import defaultImage from "../resources/default_profile_image.png";
 
 const Register = () => {
-    const authUser = useAuthUserStore(state => state.authUser);
-    const setAuthUser = useAuthUserStore(state => state.setAuthUser);
+    const authUser = useAuthUserStore((state) => state.authUser);
+    const setAuthUser = useAuthUserStore((state) => state.setAuthUser);
     const navigate = useNavigate();
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -28,37 +37,39 @@ const Register = () => {
     const [registerErrorFlag, setRegisterErrorFlag] = React.useState(false);
     const [registered, setRegistered] = React.useState(false);
 
-    const [profileImage, setProfileImage] = React.useState<File | null> (null);
+    const [profileImage, setProfileImage] = React.useState<File | null>(null);
 
     const paperStyle: CSS.Properties = {
         padding: "50px",
         margin: "100px",
         display: "grid",
         width: "33%",
-        minWidth:"400px"
-    }
+        minWidth: "400px",
+    };
 
     React.useEffect(() => {
         if (authUser) {
-            setRegisterError("You cannot register if you are already logged in. Please log out to register a new account");
+            setRegisterError(
+                "You cannot register if you are already logged in. Please log out to register a new account",
+            );
             setRegisterErrorFlag(true);
         } else {
             setRegisterError("");
             setRegisterErrorFlag(false);
         }
-    }, [])
+    }, []);
 
     function getMimeTypeFromExtension(file: File) {
         const filename = file.name.toLowerCase();
-        const extension = filename.split('.').pop();
+        const extension = filename.split(".").pop();
         switch (extension) {
-            case 'jpg':
-            case 'jpeg':
-                return 'image/jpeg';
-            case 'png':
-                return 'image/png';
-            case 'gif':
-                return 'image/gif';
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
         }
     }
 
@@ -70,18 +81,25 @@ const Register = () => {
                 if (event.target) {
                     const binaryData = event.target.result;
 
-                    axios.put(BASE_URL + "/users/" + authUser.userId + "/image", binaryData, {
-                        headers: {
-                            "Content-Type": getMimeTypeFromExtension(profileImage),
-                            "X-Authorization": authUser.token
-                        },
-                    }).then(response => {
+                    axios
+                        .put(
+                            BASE_URL + "/users/" + authUser.userId + "/image",
+                            binaryData,
+                            {
+                                headers: {
+                                    "Content-Type": getMimeTypeFromExtension(profileImage),
+                                    "X-Authorization": authUser.token,
+                                },
+                            },
+                        )
+                        .then((response) => {
                             console.log("Image uploaded successfully:", response);
-                        }).catch(error => {
+                        })
+                        .catch((error) => {
                             console.error("Error uploading image:", error);
                         });
-                };
-            }
+                }
+            };
 
             reader.onerror = (error) => {
                 console.error("Error reading the file:", error);
@@ -92,16 +110,17 @@ const Register = () => {
     }, [authUser]);
 
     const handleCreateAccount = () => {
-        axios.post(BASE_URL + "/users/register", {
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
-            password: password
-        })
+        axios
+            .post(BASE_URL + "/users/register", {
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                password: password,
+            })
             .then((response) => {
                 setRegistered(true);
             })
-            .catch(error => {
+            .catch((error) => {
                 if (error.response.status === 400) {
                     setRegisterError("Bad Request: Invalid information");
                 } else if (error.response.status === 403) {
@@ -112,22 +131,22 @@ const Register = () => {
                 } else {
                     setRegisterError(error.toString());
                 }
-            })
-    }
+            });
+    };
 
     React.useEffect(() => {
         if (registered) {
-            axios.post(BASE_URL + "/users/login", {
-                email: email,
-                password: password
-            })
+            axios
+                .post(BASE_URL + "/users/login", {
+                    email: email,
+                    password: password,
+                })
                 .then((response) => {
                     setAuthUser(response.data);
                     navigate("/");
-                })
+                });
         }
     }, [registered]);
-
 
     const validateEmail = (value: string) => {
         setEmail(value);
@@ -138,7 +157,7 @@ const Register = () => {
             setEmailErrorFlag(true);
             setEmailError("Not a valid email address");
         }
-    }
+    };
 
     const validatePassword = (value: string) => {
         setPassword(value);
@@ -149,73 +168,101 @@ const Register = () => {
             setPasswordErrorFlag(true);
             setPasswordError("Password must be at least 6 characters");
         }
-    }
-
+    };
 
     return (
         <div>
             <div>
                 <Navbar />
             </div>
-            <div style={{justifyContent:"center", width:"fill", alignItems:"center", display:"flex"}}>
+            <div
+                style={{
+                    justifyContent: "center",
+                    width: "fill",
+                    alignItems: "center",
+                    display: "flex",
+                }}
+            >
                 <Paper style={paperStyle} elevation={3}>
                     <Typography variant="h2">Register</Typography>
-                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
+                    <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                         <TextField
                             label="First Name"
                             size="medium"
                             placeholder="Enter your first name..."
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="first-name-error-text"
                             onChange={(event) => setFirstName(event.target.value)}
                         />
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
+                    <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                         <TextField
                             label="Last Name"
                             size="medium"
                             placeholder="Enter your last name..."
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="last-name-error-text"
                             onChange={(event) => setLastName(event.target.value)}
                         />
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
+                    <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                         <TextField
                             error={!!emailErrorFlag && email !== ""}
                             label="Email Address"
                             size="medium"
                             placeholder="Enter your email address..."
                             type="email"
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="email-error-text"
                             onChange={(event) => validateEmail(event.target.value)}
                             onBlur={(event) => validateEmail(event.target.value)}
                         />
-                        <FormHelperText id="email-error-text" style={{color:"#e15141"}}>{email !== "" && emailError}</FormHelperText>
+                        <FormHelperText id="email-error-text" style={{ color: "#e15141" }}>
+                            {email !== "" && emailError}
+                        </FormHelperText>
                     </FormControl>
-                    <FormControl style={{display:"flex",  margin:"30px 0 0 0"}}>
+                    <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                         <TextField
                             error={!!passwordErrorFlag && password !== ""}
                             label="Password"
                             size="medium"
                             placeholder="Enter your password"
                             type="password"
-                            style={{width:"100%"}}
+                            style={{ width: "100%" }}
                             aria-describedby="password-error-text"
                             onChange={(event) => validatePassword(event.target.value)}
                             onBlur={(event) => validatePassword(event.target.value)}
                         />
                     </FormControl>
-                    <FormHelperText id="password-error-text" style={{color:"#e15141"}}>{password !== "" && passwordError}</FormHelperText>
-                    <Typography variant="body1" style={{color:"#e15141"}}>{registerError}</Typography>
-                    <Typography variant="h6" style={{marginTop:"30px"}}>Add a Profile Picture</Typography>
+                    <FormHelperText id="password-error-text" style={{ color: "#e15141" }}>
+                        {password !== "" && passwordError}
+                    </FormHelperText>
+                    <Typography variant="body1" style={{ color: "#e15141" }}>
+                        {registerError}
+                    </Typography>
+                    <Typography variant="h6" style={{ marginTop: "30px" }}>
+                        Add a Profile Picture
+                    </Typography>
                     <Typography variant="h6">(Optional)</Typography>
-                    <div style={{display:"flex", alignItems:"center", margin: "20px", justifyContent:"center"}}>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            margin: "20px",
+                            justifyContent: "center",
+                        }}
+                    >
                         <Avatar
                             alt="Profile Picture"
-                            src={profileImage ? URL.createObjectURL(profileImage) : defaultImage}
-                            style={{objectFit:"cover", width:"200px", height:"200px", borderRadius:"50%"}}
+                            src={
+                                profileImage ? URL.createObjectURL(profileImage) : defaultImage
+                            }
+                            style={{
+                                objectFit: "cover",
+                                width: "200px",
+                                height: "200px",
+                                borderRadius: "50%",
+                            }}
                             onClick={() => fileInputRef.current?.click()}
                         />
                         <input
@@ -232,14 +279,19 @@ const Register = () => {
                     </div>
                     <div>
                         <Button
-                            disabled={!!emailErrorFlag || lastName === "" || firstName === "" || !!passwordErrorFlag}
+                            disabled={
+                                !!emailErrorFlag ||
+                                lastName === "" ||
+                                firstName === "" ||
+                                !!passwordErrorFlag
+                            }
                             variant="outlined"
                             size="large"
                             onClick={handleCreateAccount}
                             style={{
-                                marginTop:"30px",
-                                width:"50%",
-                                marginBottom:"30px"
+                                marginTop: "30px",
+                                width: "50%",
+                                marginBottom: "30px",
                             }}
                         >
                             Register Account
@@ -250,13 +302,11 @@ const Register = () => {
                             Already have an account?
                         </Typography>
                     </Link>
-                    <div>
-                    </div>
+                    <div></div>
                 </Paper>
             </div>
         </div>
-    )
-}
-
+    );
+};
 
 export default Register;

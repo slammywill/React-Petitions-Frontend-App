@@ -1,7 +1,23 @@
-import { Alert, AlertTitle, Paper, Avatar, TextField, Typography, FormHelperText, FormControl, Button, Link, MenuItem, Select, SelectChangeEvent, Table, TableCell, TableRow, TableBody, TableHead, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import {
+    Alert,
+    AlertTitle,
+    Paper,
+    Avatar,
+    TextField,
+    Typography,
+    FormHelperText,
+    FormControl,
+    Button,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from "@mui/material";
 import CSS from "csstype";
 import Navbar from "./Navbar";
-import React from "react"
+import React from "react";
 import BASE_URL from "../config";
 import axios from "axios";
 import { useAuthUserStore } from "../store";
@@ -10,7 +26,7 @@ import { InsertPhoto } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const CreatePetition = () => {
-    const authUser = useAuthUserStore(state => state.authUser);
+    const authUser = useAuthUserStore((state) => state.authUser);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
 
@@ -47,8 +63,8 @@ const CreatePetition = () => {
         margin: "100px",
         display: "grid",
         width: "33%",
-        minWidth: "400px"
-    }
+        minWidth: "400px",
+    };
 
     const validateTitle = () => {
         if (title !== "") {
@@ -58,7 +74,7 @@ const CreatePetition = () => {
             setTitleError("Title must not be empty");
             setTitleErrorFlag(true);
         }
-    }
+    };
 
     const validateDescription = () => {
         if (description !== "") {
@@ -68,60 +84,77 @@ const CreatePetition = () => {
             setDescriptionError("Description must not be empty");
             setDescriptionErrorFlag(true);
         }
-    }
+    };
 
     const handleCategoryChange = (event: SelectChangeEvent) => {
         setCategory(Number(event.target.value));
-    }
+    };
 
     const handleCreatePetition = () => {
-        if (!titleError && authUser && !descriptionError && t1Title !== "" && t1Description !== "" && !isNaN(Number(t1Cost))) {
-            const supportTiers = [{
-                title: t1Title,
-                description: t1Description,
-                cost: t1Cost
-            }]
+        if (
+            !titleError &&
+            authUser &&
+            !descriptionError &&
+            t1Title !== "" &&
+            t1Description !== "" &&
+            !isNaN(Number(t1Cost))
+        ) {
+            const supportTiers = [
+                {
+                    title: t1Title,
+                    description: t1Description,
+                    cost: t1Cost,
+                },
+            ];
 
             if (t2Title !== "" && t2Description !== "" && !isNaN(Number(t2Cost))) {
                 supportTiers.push({
                     title: t2Title,
                     description: t2Description,
-                    cost: t2Cost
-                })
+                    cost: t2Cost,
+                });
             }
 
             if (t3Title !== "" && t3Description !== "" && !isNaN(Number(t3Cost))) {
                 supportTiers.push({
                     title: t3Title,
                     description: t3Description,
-                    cost: t3Cost
-                })
+                    cost: t3Cost,
+                });
             }
 
-            axios.post(BASE_URL + "/petitions", {
-                title: title,
-                description: description,
-                categoryId: category,
-                supportTiers: supportTiers
-            }, {
-                headers: {
-                    "X-Authorization": authUser.token
-                }
-            }).then(response => {
-                setMainError("");
-                setMainErrorFlag(false);
-                navigate("/");
-            }).catch(error => {
-                setMainError(error.toString());
-                setMainErrorFlag(true);
-            });
+            axios
+                .post(
+                    BASE_URL + "/petitions",
+                    {
+                        title: title,
+                        description: description,
+                        categoryId: category,
+                        supportTiers: supportTiers,
+                    },
+                    {
+                        headers: {
+                            "X-Authorization": authUser.token,
+                        },
+                    },
+                )
+                .then((response) => {
+                    setMainError("");
+                    setMainErrorFlag(false);
+                    navigate("/");
+                })
+                .catch((error) => {
+                    setMainError(error.toString());
+                    setMainErrorFlag(true);
+                });
         }
-    }
+    };
 
-
-    const handleT1CostChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleT1CostChange: React.ChangeEventHandler<HTMLInputElement> = (
+        event,
+    ) => {
         const value = event.target.value;
-        if (value === '' || /^[0-9]+$/.test(value)) {
+        if (value === "" || /^[0-9]+$/.test(value)) {
             setT1CostValue(value);
             setT1Cost(Number(value));
         }
@@ -130,9 +163,11 @@ const CreatePetition = () => {
         }
     };
 
-    const handleT2CostChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleT2CostChange: React.ChangeEventHandler<HTMLInputElement> = (
+        event,
+    ) => {
         const value = event.target.value;
-        if (value === '' || /^[0-9]+$/.test(value)) {
+        if (value === "" || /^[0-9]+$/.test(value)) {
             setT2CostValue(value);
             setT2Cost(Number(value));
         }
@@ -141,9 +176,11 @@ const CreatePetition = () => {
         }
     };
 
-    const handleT3CostChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleT3CostChange: React.ChangeEventHandler<HTMLInputElement> = (
+        event,
+    ) => {
         const value = event.target.value;
-        if (value === '' || /^[0-9]+$/.test(value)) {
+        if (value === "" || /^[0-9]+$/.test(value)) {
             setT3CostValue(value);
             setT3Cost(Number(value));
         }
@@ -157,16 +194,29 @@ const CreatePetition = () => {
             <div>
                 <Navbar />
             </div>
-            {!authUser &&
-                <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            {!authUser && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "20px",
+                    }}
+                >
                     <Alert severity="error" style={{ paddingRight: "50px" }}>
                         <AlertTitle>Error</AlertTitle>
                         You must be logged in to create a petition
                     </Alert>
                 </div>
-            }
-            {authUser &&
-                <div style={{ justifyContent: "center", width: "fill", alignItems: "center", display: "flex" }}>
+            )}
+            {authUser && (
+                <div
+                    style={{
+                        justifyContent: "center",
+                        width: "fill",
+                        alignItems: "center",
+                        display: "flex",
+                    }}
+                >
                     <Paper style={paperStyle} elevation={3}>
                         <Typography variant="h2">Create Petition</Typography>
                         <FormControl style={{ display: "flex", margin: "50px 0 0 0" }}>
@@ -180,7 +230,12 @@ const CreatePetition = () => {
                                 onChange={(event) => setTitle(event.target.value)}
                                 onBlur={validateTitle}
                             />
-                            <FormHelperText style={{ color: "#e15141" }} id="title-error-text">{titleError}</FormHelperText>
+                            <FormHelperText
+                                style={{ color: "#e15141" }}
+                                id="title-error-text"
+                            >
+                                {titleError}
+                            </FormHelperText>
                         </FormControl>
                         <FormControl style={{ display: "flex", margin: "30px 0 0 0" }}>
                             <TextField
@@ -194,7 +249,12 @@ const CreatePetition = () => {
                                 onChange={(event) => setDescription(event.target.value)}
                                 onBlur={validateDescription}
                             />
-                            <FormHelperText style={{ color: "#e15141" }} id="description-error-text">{descriptionError}</FormHelperText>
+                            <FormHelperText
+                                style={{ color: "#e15141" }}
+                                id="description-error-text"
+                            >
+                                {descriptionError}
+                            </FormHelperText>
                         </FormControl>
                         <FormControl style={{ display: "flex", margin: "30px 25% 0 25%" }}>
                             <Typography variant="subtitle1">Category</Typography>
@@ -219,13 +279,21 @@ const CreatePetition = () => {
                                 <MenuItem value={12}>Sports and Recreation</MenuItem>
                             </Select>
                         </FormControl>
-                        <Typography variant="subtitle1" style={{ marginTop: "30px" }}>Upload a Picture</Typography>
+                        <Typography variant="subtitle1" style={{ marginTop: "30px" }}>
+                            Upload a Picture
+                        </Typography>
                         <div style={{ display: "flex", justifyContent: "center" }}>
                             <Avatar
                                 alt="Profile Picture"
                                 variant="rounded"
                                 src={image ? URL.createObjectURL(image) : undefined}
-                                style={{ objectFit: "cover", width: "400px", height: "400px", border: "1px solid #555555", backgroundColor: "#141414" }}
+                                style={{
+                                    objectFit: "cover",
+                                    width: "400px",
+                                    height: "400px",
+                                    border: "1px solid #555555",
+                                    backgroundColor: "#141414",
+                                }}
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 <InsertPhoto sx={{ fontSize: 100, color: "white" }} />
@@ -243,52 +311,91 @@ const CreatePetition = () => {
                             />
                         </div>
                         <div>
-                            <Typography variant="subtitle1" style={{ marginTop: "30px" }}>Support Tiers</Typography>
-                            <Typography variant="body2" >Add 1-3 support tiers for your supporters</Typography>
+                            <Typography variant="subtitle1" style={{ marginTop: "30px" }}>
+                                Support Tiers
+                            </Typography>
+                            <Typography variant="body2">
+                                Add 1-3 support tiers for your supporters
+                            </Typography>
                             <Accordion style={{ marginTop: "10px" }}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >Support Tier 1
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    Support Tier 1
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <TextField fullWidth label="Title" onChange={(e) => setT1Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT1Description(e.target.value)} />
-                                    <TextField fullWidth label="Cost"
+                                    <TextField
+                                        fullWidth
+                                        label="Title"
+                                        onChange={(e) => setT1Title(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        style={{ marginTop: "5px" }}
+                                        onChange={(e) => setT1Description(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Cost"
                                         value={t1CostValue}
                                         style={{ marginTop: "5px" }}
-                                        onChange={handleT1CostChange} />
+                                        onChange={handleT1CostChange}
+                                    />
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >Support Tier 2 (Optional)
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    Support Tier 2 (Optional)
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <TextField fullWidth label="Title" onChange={(e) => setT2Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT2Description(e.target.value)} />
-                                    <TextField fullWidth label="Cost"
+                                    <TextField
+                                        fullWidth
+                                        label="Title"
+                                        onChange={(e) => setT2Title(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        style={{ marginTop: "5px" }}
+                                        onChange={(e) => setT2Description(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Cost"
                                         value={t2CostValue}
                                         style={{ marginTop: "5px" }}
-                                        onChange={handleT2CostChange} />
+                                        onChange={handleT2CostChange}
+                                    />
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >Support Tier 3 (Optional)
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    Support Tier 3 (Optional)
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <TextField fullWidth label="Title" onChange={(e) => setT3Title(e.target.value)} />
-                                    <TextField fullWidth label="Description" style={{ marginTop: "5px" }} onChange={(e) => setT3Description(e.target.value)} />
-                                    <TextField fullWidth label="Cost"
+                                    <TextField
+                                        fullWidth
+                                        label="Title"
+                                        onChange={(e) => setT3Title(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Description"
+                                        style={{ marginTop: "5px" }}
+                                        onChange={(e) => setT3Description(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        label="Cost"
                                         value={t3CostValue}
                                         style={{ marginTop: "5px" }}
-                                        onChange={handleT3CostChange} />
+                                        onChange={handleT3CostChange}
+                                    />
                                 </AccordionDetails>
                             </Accordion>
                         </div>
-                        <Typography variant="subtitle1" style={{ color: "#e15141" }}>{mainError}</Typography>
+                        <Typography variant="subtitle1" style={{ color: "#e15141" }}>
+                            {mainError}
+                        </Typography>
                         <div>
                             <Button
                                 variant="contained"
@@ -304,9 +411,9 @@ const CreatePetition = () => {
                         </div>
                     </Paper>
                 </div>
-            }
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default CreatePetition;

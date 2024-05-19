@@ -96,12 +96,12 @@
 # Supporting a Petition
 
 ## U16 Supporting
-- [ ] Should the user be interested in supporting a petition the user should be able to support at a given tier from the petition details page.
-- [ ] Only an authenticated user may support a petition. Casual users should be prompted to log in or register.
-- [ ] Users can support a petition without leaving a message.
-- [ ] An owner can not support their own petition.
-- [ ] A user cannot change or delete their support.
-- [ ] A user may support a petition at any number of its tiers, however a user can only support at each unique tier once.
+- [x] Should the user be interested in supporting a petition the user should be able to support at a given tier from the petition details page.
+- [x] Only an authenticated user may support a petition. Casual users should be prompted to log in or register.
+- [x] Users can support a petition without leaving a message.
+- [x] An owner can not support their own petition.
+- [x] A user cannot change or delete their support.
+- [x] A user may support a petition at any number of its tiers, however a user can only support at each unique tier once.
 
 # Managing User Profile
 

@@ -3,15 +3,13 @@ import "../App.css";
 import defaultImage from "../resources/default_profile_image.png";
 import errorImage from "../resources/no-photo.png";
 import axios from "axios";
-import CSS from 'csstype';
-import { Link, Card, Button, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
-import BASE_URL from '../config';
-import { useNavigate } from 'react-router-dom';
+import CSS from "csstype";
+import { Link, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import BASE_URL from "../config";
 
 interface IPetitionProps {
-    petition: Petition
+    petition: Petition;
 }
-
 
 const PetitionsObject = (props: IPetitionProps) => {
     const { petition } = props;
@@ -19,48 +17,56 @@ const PetitionsObject = (props: IPetitionProps) => {
     const [ownerImageUrl, setOwnerImageUrl] = React.useState("");
 
     React.useEffect(() => {
-        axios.get(BASE_URL + "/petitions/" + petition.petitionId + "/image", { responseType: 'blob' })
-            .then(response => {
+        axios
+            .get(BASE_URL + "/petitions/" + petition.petitionId + "/image", {
+                responseType: "blob",
+            })
+            .then((response) => {
                 const url = URL.createObjectURL(response.data);
                 setPetitionImageUrl(url);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error.toString());
-            })
-    }, [])
+            });
+    }, []);
 
     React.useEffect(() => {
-        axios.get(BASE_URL + "/users/" + petition.ownerId + "/image", { responseType: 'blob' })
-            .then(response => {
+        axios
+            .get(BASE_URL + "/users/" + petition.ownerId + "/image", {
+                responseType: "blob",
+            })
+            .then((response) => {
                 const url = URL.createObjectURL(response.data);
                 setOwnerImageUrl(url);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error.toString());
-            })
-    }, [])
+            });
+    }, []);
 
     React.useEffect(() => {
-        axios.get(BASE_URL + "/petitions/" + petition.petitionId)
-            .then(response => {
+        axios
+            .get(BASE_URL + "/petitions/" + petition.petitionId)
+            .then((response) => {
                 petition.description = response.data.description;
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error.toString());
                 petition.description = "";
-            })
-    }, [])
+            });
+    }, []);
 
     React.useEffect(() => {
-        axios.get(BASE_URL + "/petitions/" + petition.petitionId + "/supporters")
-            .then(response => {
+        axios
+            .get(BASE_URL + "/petitions/" + petition.petitionId + "/supporters")
+            .then((response) => {
                 petition.supporters = response.data;
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error.toString());
                 petition.supporters = [];
-            })
-    }, [])
+            });
+    }, []);
 
     let categoryMap = new Map<number, string>([
         [1, "Wildlife"],
@@ -74,7 +80,7 @@ const PetitionsObject = (props: IPetitionProps) => {
         [9, "Community Development"],
         [10, "Economic Empowerment"],
         [11, "Science and Research"],
-        [12, "Sports and Recreation"]
+        [12, "Sports and Recreation"],
     ]);
 
     const petitionCardStyles: CSS.Properties = {
@@ -85,12 +91,22 @@ const PetitionsObject = (props: IPetitionProps) => {
         margin: "10px",
         padding: "0px",
         alignItems: "start",
-    }
+    };
 
     function formatDate(date: Date): string {
         const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
         ];
 
         const day = date.getDate();
@@ -98,7 +114,7 @@ const PetitionsObject = (props: IPetitionProps) => {
         const year = date.getFullYear();
         const hours = date.getHours();
         const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const ampm = hours >= 12 ? "PM" : "AM";
         const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
         const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
@@ -115,20 +131,26 @@ const PetitionsObject = (props: IPetitionProps) => {
                     sx={{ objectFit: "cover" }}
                     src={petitionImageUrl}
                     alt="Petition Image"
-                    onError={(e) => { (e.target as HTMLImageElement).src = errorImage }}
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).src = errorImage;
+                    }}
                 />
-                <CardContent style={{ display: "flex", flexDirection: "column", height: "90%" }}>
+                <CardContent
+                    style={{ display: "flex", flexDirection: "column", height: "90%" }}
+                >
                     <div style={{ flexGrow: 1 }}>
-                        <Typography variant="h6">
-                            {petition.title}
-                        </Typography>
+                        <Typography variant="h6">{petition.title}</Typography>
                         <div style={{ display: "block" }}>
-                            <p>{petition.ownerFirstName} {petition.ownerLastName}</p>
+                            <p>
+                                {petition.ownerFirstName} {petition.ownerLastName}
+                            </p>
                             <img
                                 src={ownerImageUrl}
                                 alt="Owner Image"
                                 id="profile-image"
-                                onError={(e) => { (e.target as HTMLImageElement).src = defaultImage }}
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = defaultImage;
+                                }}
                             />
                             <p>Created: {formatDate(new Date(petition.creationDate))}</p>
                             <p>Category: {categoryMap.get(petition.categoryId)}</p>
@@ -138,7 +160,7 @@ const PetitionsObject = (props: IPetitionProps) => {
                 </CardContent>
             </Card>
         </Link>
-    )
-}
+    );
+};
 
 export default PetitionsObject;
