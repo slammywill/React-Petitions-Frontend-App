@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
 import PetitionsObject from "./PetitionsObject";
 import CSS from "csstype";
-import { Alert, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, AlertTitle, Paper, Button, TableContainer, TableHead, Typography, TableCell, TableRow, Table, TableBody } from "@mui/material";
+import { Alert, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, AlertTitle, Paper, Button, TableContainer, MenuItem, TableHead, Typography, TableCell, TableRow, Table, TableBody, TextField, Select } from "@mui/material";
 import React from "react";
 import axios from "axios";
 import BASE_URL from "../config";
@@ -23,7 +23,10 @@ const Petition = () => {
     const [supportTiers, setSupportTiers] = React.useState<Array<SupportTier>>([]);
     const [supporters, setSupporters] = React.useState<Array<Supporter>>([]);
     const [petitions, setPetitions] = React.useState<Array<Petition>>([]);
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const [openSupportDialog, setOpenSupportDialog] = React.useState(false);
+    const [supportPetitionTierId, setSupportPetitionTierId] = React.useState(NaN);
+    const [supportPetitionMessage, setSupportPetitionMessage] = React.useState("");
     const navigate = useNavigate();
 
     React.useEffect(() => {
@@ -151,6 +154,28 @@ const Petition = () => {
             })
     }
 
+    const handleSupportPetition = () => {
+
+        axios.post(BASE_URL + "/petitions/" + petition.petitionId + "/supporters", {
+            supportTierId: supportPetitionTierId,
+            message: supportPetitionMessage
+        },
+            { headers: {
+                "X-Authorization": authUser?.token
+            }
+        })
+            .then((response) => {
+                setOpenSupportDialog(false);
+            })
+            .catch((error) => {
+                console.error(error.toString());
+            })
+    }
+
+    const handleSupportPetitionTierChange = (event: any) => {
+        setSupportPetitionTierId(event.target.value as number);
+    }
+
     return (
         <div>
             <div>
@@ -200,6 +225,14 @@ const Petition = () => {
                                 style={{ marginTop: "20px" }}
                                 onClick={() => setOpenDeleteDialog(true)}
                             >Delete Petition</Button>
+                        }
+                        {authUser?.userId !== petition.ownerId &&
+                            <Button
+                                variant="contained"
+                                color="success"
+                                style={{ marginTop: "20px" }}
+                                onClick={() => setOpenSupportDialog(true)}
+                            >Support Petition</Button>
                         }
                     </div>
                     <div style={{ width: "100%", height: "100%", marginLeft: "50px", textAlign: "left" }}>
@@ -291,6 +324,97 @@ const Petition = () => {
                         </Button>
                     </DialogActions>
                 </DialogContent>
+                <DialogContent>
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                open={openSupportDialog}
+                onClose={() => setOpenSupportDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{ textAlign: "center", minWidth: "400px" }}
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Support Petition
+                </DialogTitle>
+                {!authUser &&
+                    <DialogContent
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "100%",
+                            paddingBottom: "0",
+                        }}
+                    >
+                        <DialogContentText
+                            style={{ paddingTop: "10px", color: "#e15141" }}>
+                            You cannot support petitions as a guest. Login or register to support this petition.
+                        </DialogContentText>
+                    </DialogContent>
+                }
+
+                {authUser &&
+                    <DialogContent
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "100%",
+                            paddingBottom: "0",
+                            minWidth: "400px"
+                        }}
+                    >
+                        <DialogContentText
+                            id="alert-dialog-description"
+                            style={{ paddingTop: "10px" }}>
+                            Share your support!
+                            <div
+                                style={{ display: "block", width: "100%", marginTop: "30px" }}
+                            >
+                                <TextField
+                                    label="Message"
+                                    multiline
+                                    placeholder="Write a message (Optional)..."
+                                    style={{ width: "100%" }}
+                                    onChange={(event) => setSupportPetitionMessage(event.target.value)}
+                                />
+                                <Typography style={{ marginTop: "10px" }} variant="subtitle1">Select support tier:</Typography>
+                                <Select
+                                    style={{ width: "100%" }}
+                                    value={supportPetitionTierId}
+                                    onChange={handleSupportPetitionTierChange}
+                                >
+                                    {supportTiers.length >= 1 && !supporters.some((supporter) => (supporter.supporterId === authUser.userId && supporter.supportTierId === supportTiers.at(0)?.supportTierId)) &&
+                                        <MenuItem value={supportTiers.at(0)?.supportTierId}>{supportTiers.at(0)?.title}</MenuItem>}
+                                    {supportTiers.length >= 2 && !supporters.some((supporter) => (supporter.supporterId === authUser.userId && supporter.supportTierId === supportTiers.at(1)?.supportTierId)) &&
+                                        <MenuItem value={supportTiers.at(1)?.supportTierId}>{supportTiers.at(1)?.title}</MenuItem>}
+                                    {supportTiers.length >= 3 && !supporters.some((supporter) => (supporter.supporterId === authUser.userId && supporter.supportTierId === supportTiers.at(2)?.supportTierId)) &&
+                                        <MenuItem value={supportTiers.at(2)?.supportTierId}>{supportTiers.at(2)?.title}</MenuItem>}
+                                </Select>
+                            </div>
+                        </DialogContentText>
+                        <DialogActions style={{
+                            justifyContent: "center",
+                            height: "100%",
+                            paddingTop: "30px",
+                            display: "flex"
+                        }}>
+                            <Button
+                                style={{ width: "100%", height: "50px" }}
+                                variant="contained"
+                                onClick={() => setOpenSupportDialog(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                style={{ width: "100%", height: "50px" }}
+                                variant="contained"
+                                color="success"
+                                disableElevation
+                                onClick={handleSupportPetition}
+                            >Submit
+                            </Button>
+                        </DialogActions>
+                    </DialogContent>
+                }
                 <DialogContent>
                 </DialogContent>
             </Dialog>
