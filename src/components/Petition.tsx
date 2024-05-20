@@ -262,8 +262,8 @@ const Petition = () => {
                             }}
                             style={{
                                 objectFit: "cover",
-                                width: "400px",
-                                height: "400px",
+                                width: "250px",
+                                height: "250px",
                                 borderRadius: "20px",
                                 marginBottom: "20px",
                             }}
