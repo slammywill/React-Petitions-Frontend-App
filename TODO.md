@@ -76,9 +76,9 @@
 - [x] The petition must then be included in the list of auctions and works with searching, filtering, sorting, and pagination.
 
 ## U13 Edit
-- [ ] Only the owner of the petition can edit it.
-- [ ] Basic information (title, description and categoryId) may be changed at any time.
-- [ ] Support tiers:
+- [x] Only the owner of the petition can edit it.
+- [x] Basic information (title, description and categoryId) may be changed at any time.
+- [x] Support tiers:
     - May only be added, if the petition currently has less than 3 support tiers.
     - May only be updated, if the specified support tier has no supporters.
     - May only be deleted, if the specified support tier has no supporters and the petition currently has more than 1 support tier.

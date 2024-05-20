@@ -112,11 +112,117 @@ const EditPetition = () => {
         }
     }, [petition]);
 
+    const deleteSupportTier = (supportTier: SupportTier) => {
+        axios
+            .delete(
+                BASE_URL +
+                "/petitions/" +
+                petition.petitionId +
+                "/supportTiers/" +
+                supportTier.supportTierId,
+                {
+                    headers: {
+                        "X-Authorization": authUser?.token,
+                    },
+                },
+            )
+            .then((response) => {
+                getPetition();
+            })
+            .catch((error) => {
+                console.error(error.toString());
+            });
+    };
+
+    const updatePetition = () => {
+        axios
+            .patch(
+                BASE_URL +
+                "/petitions/" +
+                petition.petitionId,
+                {
+                    title: title,
+                    description: description,
+                    categoryId: category
+                },
+                {
+                    headers: {
+                        "X-Authorization": authUser?.token,
+                    },
+                },
+            )
+            .then((response) => {
+                getPetition();
+            })
+            .catch((error) => {
+                console.error(error.toString());
+            });
+    };
+
+    const updateSupportTier = (supportTier: SupportTier, title: String, description: String, cost: Number) => {
+        if (noSupporters(supportTier)) {
+            axios
+                .patch(BASE_URL +
+                    "/petitions/" +
+                    petition.petitionId +
+                    "/supportTiers/" +
+                    supportTier.supportTierId,
+                    {
+                        title: title,
+                        description: description,
+                        cost: cost
+                    },
+                    {
+                        headers: {
+                            "X-Authorization": authUser?.token,
+                        },
+                    },
+                )
+                .then((response) => {
+                    getPetition();
+                })
+                .catch((error) => {
+                    console.error(error.toString());
+                });
+        }
+    }
+
+    const addSupportTier = (title: String, description: String, cost: Number) => {
+        if (!(supportTiers &&
+            supportTiers.some(
+                (supportTier) =>
+                    supportTier.title ===
+                    title
+            ))) {
+            axios
+                .put(BASE_URL +
+                    "/petitions/" +
+                    petition.petitionId +
+                    "/supportTiers/",
+                    {
+                        title: title,
+                        description: description,
+                        cost: cost
+                    },
+                    {
+                        headers: {
+                            "X-Authorization": authUser?.token,
+                        },
+                    },
+                )
+                .then((response) => {
+                    getPetition();
+                })
+                .catch((error) => {
+                    console.error(error.toString());
+                });
+        }
+    }
+
     React.useEffect(() => {
         const allEmpty = t1Title === "" && t1Description === "" && isNaN(t1Cost);
         const allNonEmpty =
             t1Title !== "" && t1Description !== "" && !isNaN(t1Cost);
-        console.log(t1Cost);
         setT1Valid(allEmpty || allNonEmpty);
     }, [t1Title, t1Description, t1Cost]);
 
@@ -154,6 +260,15 @@ const EditPetition = () => {
             setT3Cost(supportTiers[2].cost);
         }
     }, [supportTiers]);
+
+    const noSupporters = (supportTier: SupportTier) => {
+        return !(supporters &&
+            supporters.some(
+                (supporter) =>
+                    supporter.supportTierId ===
+                    supportTier.supportTierId
+            ))
+    };
 
     const validateTitle = () => {
         if (title === "") {
@@ -235,27 +350,32 @@ const EditPetition = () => {
         }
     };
 
-    const deleteSupportTier = (supportTier: SupportTier) => {
-        axios
-            .delete(
-                BASE_URL +
-                "/petitions/" +
-                petition.petitionId +
-                "/supportTiers/" +
-                supportTier.supportTierId,
-                {
-                    headers: {
-                        "X-Authorization": authUser?.token,
-                    },
-                },
-            )
-            .then((response) => {
-                getPetition();
-            })
-            .catch((error) => {
-                console.error(error.toString());
-            });
-    };
+    const handleEditClicked = () => {
+        updatePetition();
+
+        // Support Tier 1
+        if (supportTiers[0] && t1Valid && noSupporters(supportTiers[0])) {
+            updateSupportTier(supportTiers[0], t1Title, t1Description, t1Cost);
+        }
+
+        // Support Tier 2
+        if (t2Valid) {
+            if (supportTiers[1] && noSupporters(supportTiers[1])) {
+                updateSupportTier(supportTiers[1], t2Title, t2Description, t2Cost);
+            } else {
+                addSupportTier(t2Title, t2Description, t2Cost);
+            }
+        }
+
+        // Support Tier 3
+        if (t3Valid) {
+            if (supportTiers[2] && noSupporters(supportTiers[2])) {
+                updateSupportTier(supportTiers[2], t3Title, t3Description, t3Cost);
+            } else {
+                addSupportTier(t3Title, t3Description, t3Cost);
+            }
+        }
+    }
 
     return (
         <div>
@@ -645,6 +765,7 @@ const EditPetition = () => {
                                 color="success"
                                 variant="contained"
                                 sx={{ width: "40%", marginLeft: "5px" }}
+                                onClick={handleEditClicked}
                                 disabled={
                                     titleErrorFlag ||
                                     descriptionErrorFlag ||

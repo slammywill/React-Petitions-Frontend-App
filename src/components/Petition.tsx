@@ -296,25 +296,40 @@ const Petition = () => {
                         </div>
                         {authUser?.userId === petition.ownerId &&
                             petition.numberOfSupporters === 0 && (
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    style={{ marginTop: "20px" }}
-                                    onClick={() => setOpenDeleteDialog(true)}
-                                >
-                                    Delete Petition
-                                </Button>
+                                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        style={{ marginTop: "20px", width: "50%" }}
+                                        onClick={() => setOpenDeleteDialog(true)}
+                                    >
+                                        Delete Petition
+                                    </Button>
+                                </div>
                             )}
                         {authUser?.userId !== petition.ownerId && (
-                            <Button
-                                variant="contained"
-                                color="success"
-                                style={{ marginTop: "20px" }}
-                                onClick={() => setOpenSupportDialog(true)}
-                            >
-                                Support Petition
-                            </Button>
+                            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    style={{ marginTop: "20px", width: "50%" }}
+                                    onClick={() => setOpenSupportDialog(true)}
+                                >
+                                    Support Petition
+                                </Button>
+                            </div>
                         )}
+                        {authUser?.userId === petition.ownerId &&
+                            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                                <Button
+                                    variant="contained"
+                                    style={{ marginTop: "10px", width: "50%" }}
+                                    onClick={() => navigate("/editPetitions/" + petition.petitionId)}
+                                >
+                                    Edit Petition
+                                </Button>
+                            </div>
+                        }
                     </div>
                     <div
                         style={{
