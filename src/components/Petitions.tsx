@@ -242,24 +242,27 @@ const Petitions = () => {
                         <ToggleButton value="10">Science and Research</ToggleButton>
                         <ToggleButton value="11">Sports and Recreation</ToggleButton>
                     </ToggleButtonGroup>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={viewMyPetitions}
-                                onChange={handleViewMyPetitions}
-                            />
-                        }
-                        label="View My Petitions"
-                    />
-                    <Button
-                        variant="contained"
-                        color="success"
-                        size="large"
-                        style={{ margin: "20px 0 20px 0" }}
-                        onClick={() => navigate("/createPetition")}
-                    >
-                        Create Petition
-                    </Button>
+                    {authUser &&
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={viewMyPetitions}
+                                    onChange={handleViewMyPetitions}
+                                />
+                            }
+                            label="View My Petitions"
+                        />}
+                    {authUser &&
+                        <Button
+                            variant="contained"
+                            color="success"
+                            size="large"
+                            style={{ margin: "20px 0 20px 0" }}
+                            onClick={() => navigate("/createPetition")}
+                        >
+                            Create Petition
+                        </Button>
+                    }
                 </div>
                 <div style={{ display: "inline-block", minWidth: "320px" }}>
                     {errorFlag ? (

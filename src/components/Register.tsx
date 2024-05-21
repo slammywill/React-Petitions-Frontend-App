@@ -30,7 +30,7 @@ const Register = () => {
     const [password, setPassword] = React.useState("");
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
-    const [showPasword,setShowPassword] = React.useState(false);
+    const [showPasword, setShowPassword] = React.useState(false);
 
     const [emailError, setEmailError] = React.useState("");
     const [emailErrorFlag, setEmailErrorFlag] = React.useState(false);

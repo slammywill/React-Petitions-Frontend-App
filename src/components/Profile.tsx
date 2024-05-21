@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import defaultImage from "../resources/default_profile_image.png";
 import { useNavigate } from "react-router-dom";
+import { profile } from "console";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -87,54 +88,34 @@ const Profile = () => {
         }
     }, [enableEdit, hasImage]);
 
-    function getMimeTypeFromExtension(file: File) {
-        const filename = file.name.toLowerCase();
-        const extension = filename.split(".").pop();
-        switch (extension) {
-            case "jpg":
-            case "jpeg":
-                return "image/jpeg";
-            case "png":
-                return "image/png";
-            case "gif":
-                return "image/gif";
-        }
-    }
 
     React.useEffect(() => {
         if (authUser && authUser.userId && profileImage) {
             const reader = new FileReader();
 
-            reader.onload = (event) => {
-                if (event.target) {
-                    const binaryData = event.target.result;
+            reader.onload = async () => {
+                try {
+                    const arrayBuffer = reader.result as ArrayBuffer;
+                    const uint8Array = new Uint8Array(arrayBuffer);
 
-                    axios
-                        .put(
-                            BASE_URL + "/users/" + authUser.userId + "/image",
-                            binaryData,
-                            {
-                                headers: {
-                                    "Content-Type": getMimeTypeFromExtension(profileImage),
-                                    "X-Authorization": authUser.token,
-                                },
+                    await axios.put(
+                        BASE_URL + "/users/" + authUser.userId + "/image",
+                        uint8Array,
+                        {
+                            headers: {
+                                "Content-Type": profileImage.type,
+                                "X-Authorization": authUser.token,
                             },
-                        )
-                        .then((response) => {
-                            console.log("Image uploaded successfully:", response);
-                            navigate("/");
-                        })
-                        .catch((error) => {
-                            console.error("Error uploading image:", error);
-                        });
+                        },
+                    );
+
+                    console.log("Image uploaded successfully");
+                } catch (error) {
+                    console.error("Error uploading image:", error);
                 }
             };
 
-            reader.onerror = (error) => {
-                console.error("Error reading the file:", error);
-            };
-
-            reader.readAsBinaryString(profileImage);
+            reader.readAsArrayBuffer(profileImage);
         }
     }, [edited]);
 
@@ -153,7 +134,7 @@ const Profile = () => {
                     console.log(error.toString());
                 });
         }
-    }, [user]);
+    }, [user, enableEdit, hasImage]);
 
     const validateFirstName = () => {
         if (firstName === "") {
@@ -228,6 +209,7 @@ const Profile = () => {
                 })
                 .then((response) => {
                     setEdited(true);
+                    setEnableEdit(false);
                 })
                 .catch((error) => {
                     if (error.response.status === 401) {
@@ -254,6 +236,7 @@ const Profile = () => {
                 })
                 .then((response) => {
                     setHasImage(false);
+                    setProfileImage(null);
                 })
                 .catch((error) => {
                     console.error(error.toString());
