@@ -348,7 +348,7 @@ const Petition = () => {
                         </Typography>
                         <Typography variant="body1">
                             This petition has {petition.numberOfSupporters}{" "}
-                            {petition.numberOfSupporters === 1 ? "supporter" : "supporters"}.
+                            {petition.numberOfSupporters === 1 ? "supporter" : "supporters"}
                         </Typography>
                         <Typography variant="body1">
                             This petition has raised $
