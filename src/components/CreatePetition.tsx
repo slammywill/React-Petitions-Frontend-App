@@ -178,6 +178,9 @@ const CreatePetition = () => {
                     setMainError(error.toString());
                     setMainErrorFlag(true);
                 });
+        } else {
+            setMainErrorFlag(true);
+            setMainError("A petition must have a title, description, category, image and at least one fully filled out support tier.");
         }
     };
 
