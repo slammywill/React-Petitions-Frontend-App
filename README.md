@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## About
+
+This is my implementation of the frontend app for the [API](https://github.com/slammywill/React-Petitions-Frontend-App) developed as SENG365 Assignment 2. This uses React allong with Material UI to serve the webpages, and interact with the API. All credits for the boilerplate code and assignment definition go to the SENG365 teaching team.
+
 ## Available Scripts
 
 In the project directory, you can run:
